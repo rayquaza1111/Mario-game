@@ -14,6 +14,8 @@ public:
 	void Update(DWORD dt) {}
 };
 
+
+
 class CMario : public CGameObject
 {
 protected:

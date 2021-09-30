@@ -27,6 +27,10 @@
 
 #include "Mario.h"
 
+#include "TMXParser.h"
+#include "TSXParser.h"
+
+
 
 #define WINDOW_CLASS_NAME L"SampleWindow"
 #define MAIN_WINDOW_TITLE L"02 - Sprite animation"
@@ -39,11 +43,13 @@
 #define ID_TEX_MARIO 0
 #define ID_TEX_ENEMY 10
 #define ID_TEX_MISC 20
+#define ID_TEX_MAP 30
 
 #define TEXTURES_DIR L"textures"
 #define TEXTURE_PATH_MARIO TEXTURES_DIR "\\mario.png"
 #define TEXTURE_PATH_MISC TEXTURES_DIR "\\misc.png"
 #define TEXTURE_PATH_ENEMIES TEXTURES_DIR "\\enemies.png"
+#define TEXTURE_MAP TEXTURES_DIR "\\SuperMarioBros3Map1-1BG.png"
 
 CMario *mario;
 #define MARIO_START_X 10.0f
@@ -51,6 +57,7 @@ CMario *mario;
 #define MARIO_START_VX 0.1f
 
 CBrick *brick;
+
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -78,6 +85,7 @@ void LoadResources()
 	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
 
 
+
 	CSprites * sprites = CSprites::GetInstance();
 	
 	LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
@@ -97,6 +105,10 @@ void LoadResources()
 	sprites->Add(20002, 318, 117, 334, 133, texMisc);
 	sprites->Add(20003, 336, 117, 352, 133, texMisc);
 	sprites->Add(20004, 354, 117, 370, 133, texMisc);
+
+
+
+
 	
 
 	CAnimations * animations = CAnimations::GetInstance();
@@ -121,10 +133,13 @@ void LoadResources()
 	ani->Add(20003);
 	ani->Add(20004);
 	animations->Add(510, ani);
+
+
 	
 	
 	mario = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX);
 	brick = new CBrick(100.0f, 100.0f);
+
 }
 
 /*

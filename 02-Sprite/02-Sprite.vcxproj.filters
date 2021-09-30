@@ -45,6 +45,12 @@
     <ClCompile Include="Animations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TMXParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TSXParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debug.h">
@@ -80,6 +86,36 @@
     <ClInclude Include="Animations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TMXParser-master\include\rapidxml\rapidxml.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMXParser-master\include\rapidxml\rapidxml_iterators.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMXParser-master\include\rapidxml\rapidxml_print.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMXParser-master\include\rapidxml\rapidxml_utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMXParser-master\include\TMXParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TSXParser-master\include\rapidxml\rapidxml.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TSXParser-master\include\rapidxml\rapidxml_iterators.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TSXParser-master\include\rapidxml\rapidxml_print.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TSXParser-master\include\rapidxml\rapidxml_utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TSXParser-master\include\TSXParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\mario.png">
@@ -88,5 +124,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="TMXParser-master\include\rapidxml\manual.html" />
+    <None Include="TSXParser-master\include\rapidxml\manual.html" />
+    <None Include="TMXParser-master\TMXParser.cbp" />
   </ItemGroup>
 </Project>

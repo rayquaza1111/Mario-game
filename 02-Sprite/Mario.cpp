@@ -44,3 +44,4 @@ void CBrick::Render() {
 	ani->Render(x, y);
 
 }
+
