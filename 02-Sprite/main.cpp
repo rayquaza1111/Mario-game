@@ -27,8 +27,7 @@
 
 #include "Mario.h"
 
-#include "TMXParser.h"
-#include "TSXParser.h"
+
 
 
 
@@ -43,13 +42,17 @@
 #define ID_TEX_MARIO 0
 #define ID_TEX_ENEMY 10
 #define ID_TEX_MISC 20
-#define ID_TEX_MAP 30
+
 
 #define TEXTURES_DIR L"textures"
 #define TEXTURE_PATH_MARIO TEXTURES_DIR "\\mario.png"
 #define TEXTURE_PATH_MISC TEXTURES_DIR "\\misc.png"
 #define TEXTURE_PATH_ENEMIES TEXTURES_DIR "\\enemies.png"
-#define TEXTURE_MAP TEXTURES_DIR "\\SuperMarioBros3Map1-1BG.png"
+
+#define ID_TEX_MAP 30
+
+#define TEXTURE_PATH_MAP TEXTURES_DIR "\\SuperMarioBros3Map1-1BG.png"
+
 
 CMario *mario;
 #define MARIO_START_X 10.0f
@@ -57,6 +60,11 @@ CMario *mario;
 #define MARIO_START_VX 0.1f
 
 CBrick *brick;
+
+CMap **arrMap = new CMap * [300];
+
+
+//CMap *map;
 
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -78,11 +86,14 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 */
 void LoadResources()
 {
+
+
 	CTextures * textures = CTextures::GetInstance();
 
 	textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
 	//textures->Add(ID_ENEMY_TEXTURE, TEXTURE_PATH_ENEMIES, D3DCOLOR_XRGB(156, 219, 239));
 	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
+	textures->Add(ID_TEX_MAP, TEXTURE_PATH_MAP);
 
 
 
@@ -90,7 +101,7 @@ void LoadResources()
 	
 	LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
 
-	// readline => id, left, top, right 
+	// readline => id, left, top, right , bottom
 
 	sprites->Add(10001, 246, 154, 259, 181, texMario);
 	sprites->Add(10002, 275, 154, 290, 181, texMario);
@@ -106,10 +117,9 @@ void LoadResources()
 	sprites->Add(20003, 336, 117, 352, 133, texMisc);
 	sprites->Add(20004, 354, 117, 370, 133, texMisc);
 
+	LPTEXTURE texMap = textures->Get(ID_TEX_MAP);
 
 
-
-	
 
 	CAnimations * animations = CAnimations::GetInstance();
 	LPANIMATION ani;
@@ -135,10 +145,45 @@ void LoadResources()
 	animations->Add(510, ani);
 
 
+
+
 	
 	
+
+
+	int Cmaps = 1, Cmapa = 10, Cmapleft = 0, Cmaptop = 192, Cmapright = 16, Cmapbottom = 208;
+	int k = 0;
+	int l = 0;
+	int yy = 0.0f;
+	for (int i = 0; i < 300; i++)
+	{
+		for (int j = 0; j < 20; j++)
+		{
+			sprites->Add(Cmaps, Cmapleft, Cmaptop, Cmapright, Cmapbottom, texMap);
+			ani = new CAnimation(100);
+			ani->Add(Cmaps);
+			animations->Add(Cmapa, ani);
+			arrMap[k] = new CMap(0.0f + 16.0f * l, yy, Cmapa);
+			Cmaps++;
+			Cmapleft = Cmapleft + 16;
+			Cmapright = Cmapright + 16;
+			Cmapa++;
+			i++;
+			l++;
+			k++;
+		}
+		yy = yy + 16.0f;
+		l = 0;
+		Cmapleft = 0;
+		Cmapright = 16;
+		Cmaptop = Cmaptop + 16;
+		Cmapbottom = Cmapbottom + 16;
+	}
+
 	mario = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX);
 	brick = new CBrick(100.0f, 100.0f);
+
+	
 
 }
 
@@ -173,6 +218,10 @@ void Render()
 
 		brick->Render();
 		mario->Render();
+		for (int i = 0; i < 300; i++)
+		{
+			arrMap[i]->Render();
+		}
 
 		// Uncomment this line to see how to draw a porttion of a texture  
 		//g->Draw(10, 10, texMisc, 300, 117, 316, 133);

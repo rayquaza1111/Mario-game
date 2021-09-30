@@ -5,7 +5,14 @@
 #include "Animation.h"
 #include "Animations.h"
 
+#include "Textures.h"
+
+#include "Sprite.h"
+#include "Sprites.h"
+
 #define MARIO_WIDTH 14
+
+
 
 class CBrick : public CGameObject {
 public: 
@@ -26,4 +33,14 @@ public:
 	void Render();
 };
 
+class CMap : public CGameObject {
+protected:
+	int  idani;
+
+public:
+	CMap(float x, float y, int idani);
+	void Render();
+	void Update(DWORD dt) {}
+	/*int idspirte, idani, top, left, right, bottom;*/
+};
 

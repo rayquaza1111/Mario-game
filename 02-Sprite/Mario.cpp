@@ -1,6 +1,13 @@
 #include "Game.h"
 #include "Mario.h"
 
+#include "Animation.h"
+#include "Animations.h"
+
+#define ID_TEX_MAP 30
+
+#define TEXTURE_PATH_MAP TEXTURES_DIR "\\SuperMarioBros3Map1-1BG.png"
+
 CMario::CMario(float x, float y, float vx):CGameObject(x, y)
 {
 	this->vx = vx;
@@ -40,6 +47,20 @@ void CMario::Render()
 void CBrick::Render() {
 
 	LPANIMATION ani = CAnimations::GetInstance()->Get(510);
+
+	ani->Render(x, y);
+
+}
+
+CMap::CMap(float x, float y, int idani) : CGameObject(x, y)
+{
+	this->idani = idani;
+}
+
+void CMap::Render() {
+
+
+	LPANIMATION ani = CAnimations::GetInstance()->Get(idani);
 
 	ani->Render(x, y);
 
