@@ -2,8 +2,9 @@
 
 void CBrick::Render()
 {
-	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(ID_ANI_BRICK)->Render(x, y);
+	
+	CSprites* s = CSprites::GetInstance();
+	s->Get(this-> idsprite)->Draw(x, y);
 	//RenderBoundingBox();
 }
 
