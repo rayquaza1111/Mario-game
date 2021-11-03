@@ -10,6 +10,7 @@
 #include "Coin.h"
 #include "Platform.h"
 #include "Questionblock.h"
+#include "Tunnel.h"
 
 #include "SampleKeyEventHandler.h"
 
@@ -122,6 +123,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		int spriteid = atoi(tokens[3].c_str());
 		obj = new CBrick(x, y, spriteid);
+		break;
+	}
+	case OBJECT_TYPE_TUNNEL:
+	{
+		int spriteid = atoi(tokens[3].c_str());
+		obj = new CTunnel(x, y, spriteid);
 		break;
 	}
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
