@@ -5,6 +5,7 @@ brick.txt
 coin.txt
 goomba.txt
 ground.txt
+questionblock.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -22,5 +23,15 @@ ground.txt
 5	1488	180	16	16	5	51000	52000	53000
 5	1616	180	16	16	35	51000	52000	53000
 5	2192	180	16	16	34	51000	52000	53000
+
+#Questionblock
+6	176	116
+6	192	116
+6	224	68
+6	240	68
+6	400	84
+6	640	148
+6	688	116
+6	1424	116
 
 
