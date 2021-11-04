@@ -1,11 +1,11 @@
-#include "Platform.h"
+#include "Topbox.h"
 
 #include "Sprite.h"
 #include "Sprites.h"
 
 #include "Textures.h"
 
-void CPlatform::RenderBoundingBox()
+void CTopbox::RenderBoundingBox()
 {
 	D3DXVECTOR3 p(x, y, 0);
 	RECT rect;
@@ -28,11 +28,11 @@ void CPlatform::RenderBoundingBox()
 	CGame::GetInstance()->Draw(xx - cx, y - cy, bbox, nullptr, BBOX_ALPHA, rect.right - 1, rect.bottom - 1);
 }
 
-void CPlatform::Render()
+void CTopbox::Render()
 {
-	if (this->length <= 0) return; 
-	float xx = x; 
-	CSprites * s = CSprites::GetInstance();
+	if (this->length <= 0) return;
+	float xx = x;
+	CSprites* s = CSprites::GetInstance();
 
 	s->Get(this->spriteIdBegin)->Draw(xx, y);
 	xx += this->cellWidth;
@@ -41,13 +41,13 @@ void CPlatform::Render()
 		s->Get(this->spriteIdMiddle)->Draw(xx, y);
 		xx += this->cellWidth;
 	}
-	if (length>1)
+	if (length > 1)
 		s->Get(this->spriteIdEnd)->Draw(xx, y);
 
 	RenderBoundingBox();
 }
 
-void CPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)
+void CTopbox::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 	float cellWidth_div_2 = this->cellWidth / 2;
 	l = x - cellWidth_div_2;
@@ -55,6 +55,4 @@ void CPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)
 	r = l + this->cellWidth * this->length;
 	b = t + this->cellHeight;
 }
-
-
 

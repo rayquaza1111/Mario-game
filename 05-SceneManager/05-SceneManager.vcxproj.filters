@@ -81,6 +81,12 @@
     <ClCompile Include="Tunnel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Topbox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Nocollision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h">
@@ -156,6 +162,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tunnel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Topbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Nocollision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,6 +7,8 @@ goomba.txt
 ground.txt
 questionblock.txt
 tunnel.txt
+topbox.txt
+nocollision.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -24,6 +26,8 @@ tunnel.txt
 5	1536	180	16	16	5	51000	52000	53000
 5	1664	180	16	16	36	51000	52000	53000
 5	2256	180	16	16	35	51000	52000	53000
+
+
 
 #Questionblock
 6	176	116
@@ -107,6 +111,13 @@ tunnel.txt
 7	2336	164	70004
 7	2320	148	70001
 7	2336	164	70002
+
+#Topbox
+8	240	132	16	16	3	81000	82000	83000	
+
+#Nocollision
+9	240	148	16	16	3	91000	92000	93000
+
 
 
 

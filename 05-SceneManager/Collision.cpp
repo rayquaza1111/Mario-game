@@ -201,6 +201,16 @@ void CCollision::Filter( LPGAMEOBJECT objSrc,
 			continue;
 		}
 
+		if (filterBlock == 1)
+		{
+			float b;
+			c->obj->BlockFromUnder(b);
+			if (c->ny > 0 && !b)
+			{
+				continue;
+			}
+		}
+
 		if (c->t < min_tx && c->nx != 0 && filterX == 1) {
 			min_tx = c->t; min_ix = i;
 		}
@@ -346,6 +356,7 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 		LPCOLLISIONEVENT e = coEvents[i];
 		if (e->isDeleted) continue;
 		if (e->obj->IsBlocking()) continue;  // blocking collisions were handled already, skip them
+
 
 		objSrc->OnCollisionWith(e);			
 	}

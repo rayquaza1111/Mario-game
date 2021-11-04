@@ -7,6 +7,8 @@
 #include "Goomba.h"
 #include "Coin.h"
 #include "Portal.h"
+#include "Platform.h"
+#include "Topbox.h"
 
 #include "Collision.h"
 
@@ -54,6 +56,10 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithCoin(e);
 	else if (dynamic_cast<CPortal*>(e->obj))
 		OnCollisionWithPortal(e);
+	else if (dynamic_cast<CTopbox*>(e->obj) && e->ny>0)
+		OnCollisionWithTopbox(e);
+	
+
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -101,6 +107,15 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 	CPortal* p = (CPortal*)e->obj;
 	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
 }
+
+void CMario::OnCollisionWithTopbox(LPCOLLISIONEVENT e)
+{
+	DebugOut(L">>> Mario Touch >>> \n");
+
+}
+
+
+
 
 //
 // Get animation ID for small Mario
@@ -319,6 +334,7 @@ void CMario::SetState(int state)
 		vx = 0;
 		ax = 0;
 		break;
+
 	}
 
 	CGameObject::SetState(state);
