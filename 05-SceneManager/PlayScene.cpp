@@ -13,6 +13,7 @@
 #include "Tunnel.h"
 #include "Topbox.h"
 #include "Nocollision.h"
+#include "Mushroom.h"
 
 #include "SampleKeyEventHandler.h"
 
@@ -109,7 +110,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	switch (object_type)
 	{
-	case OBJECT_TYPE_MARIO:
+	/*case OBJECT_TYPE_MARIO:
 		if (player!=NULL) 
 		{
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
@@ -119,7 +120,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		player = (CMario*)obj;  
 
 		DebugOut(L"[INFO] Player object has been created!\n");
-		break;
+		break;*/
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
 	case OBJECT_TYPE_BRICK: 
 	{
@@ -134,6 +135,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
+	case OBJECT_TYPE_MUSHROOM: obj = new CMushroom(x, y); break;
 	case OBJECT_TYPE_QUESTIONBLOCK: obj = new CQuestionblock(x, y); break;
 
 	case OBJECT_TYPE_PLATFORM:
@@ -202,6 +204,17 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 
+	case OBJECT_TYPE_MARIO:
+		if (player != NULL)
+		{
+			DebugOut(L"[ERROR] MARIO object was created before!\n");
+			return;
+		}
+		obj = new CMario(x, y);
+		player = (CMario*)obj;
+
+		DebugOut(L"[INFO] Player object has been created!\n");
+		break;
 
 	default:
 		DebugOut(L"[ERROR] Invalid object type: %d\n", object_type);

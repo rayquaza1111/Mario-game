@@ -9,6 +9,8 @@
 #include "Portal.h"
 #include "Platform.h"
 #include "Topbox.h"
+#include "Questionblock.h"
+#include "Mushroom.h"
 
 #include "Collision.h"
 
@@ -58,6 +60,10 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithPortal(e);
 	else if (dynamic_cast<CTopbox*>(e->obj) && e->ny>0)
 		OnCollisionWithTopbox(e);
+	else if (dynamic_cast<CQuestionblock*>(e->obj) && e->ny>0)
+		OnCollisionWithQuestionblock(e);
+	else if (dynamic_cast<CMushroom*>(e->obj))
+		OnCollisionWithMushroom(e);
 	
 
 }
@@ -111,7 +117,22 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithTopbox(LPCOLLISIONEVENT e)
 {
 	DebugOut(L">>> Mario Touch >>> \n");
+}
 
+void CMario::OnCollisionWithQuestionblock(LPCOLLISIONEVENT e)
+{
+	CQuestionblock* p = (CQuestionblock*)e->obj;
+	p->SetState(QUESTIONBLOCK_STATE_IDLE);
+}
+
+void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
+{
+	CMushroom* p = (CMushroom*)e->obj;
+	if (p->GetState() == MUSHROOM_STATE_IDLE && e->ny > 0)
+	{
+		DebugOut(L">>> Mario Touch mushroom >>> \n");
+		p->SetState(MUSHROOM_STATE_RISING);
+	}
 }
 
 

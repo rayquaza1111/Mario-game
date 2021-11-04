@@ -1,10 +1,34 @@
 #include "Questionblock.h"
 
+CQuestionblock::CQuestionblock(float x, float y):CGameObject(x, y)
+{
+	
+	SetState(QUESTIONBLOCK_STATE_ACTIVE);
+}
+
+
 void CQuestionblock::Render()
 {
-	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(ID_ANI_QUESTIONBLOCK)->Render(x, y);
-	//RenderBoundingBox();
+	int aniId = ID_ANI_QUESTIONBLOCK_ACTIVE;
+	if (state == QUESTIONBLOCK_STATE_IDLE)
+	{
+		aniId = ID_ANI_QUESTIONBLOCK_IDLE;
+	}
+
+	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
+	RenderBoundingBox();
+}
+
+void CQuestionblock::SetState(int state)
+{
+	CGameObject::SetState(state);
+	switch (state)
+	{
+	case QUESTIONBLOCK_STATE_ACTIVE:
+		break;
+	case QUESTIONBLOCK_STATE_IDLE:
+		break;
+	}
 }
 
 void CQuestionblock::GetBoundingBox(float& l, float& t, float& r, float& b)
