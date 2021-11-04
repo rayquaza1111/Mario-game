@@ -211,6 +211,26 @@ void CCollision::Filter( LPGAMEOBJECT objSrc,
 			}
 		}
 
+		if (filterBlock == 1)
+		{
+			float r;
+			c->obj->BlockFromRight(r);
+			if (c->nx < 0 && !r)
+			{
+				continue;
+			}
+		}
+
+		if (filterBlock == 1)
+		{
+			float l;
+			c->obj->BlockFromLeft(l);
+			if (c->nx > 0 && !l)
+			{
+				continue;
+			}
+		}
+
 		if (c->t < min_tx && c->nx != 0 && filterX == 1) {
 			min_tx = c->t; min_ix = i;
 		}

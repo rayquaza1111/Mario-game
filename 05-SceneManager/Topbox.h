@@ -31,6 +31,8 @@ public:
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	void RenderBoundingBox();
 	void BlockFromUnder(float& b) { b = 0.0f; }
+	void BlockFromRight(float& r) { r = 0.0f; }
+	void BlockFromLeft(float& l) { l = 0.0f; }
 
 
 

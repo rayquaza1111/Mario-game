@@ -66,6 +66,8 @@ public:
 	virtual int IsBlocking() { return 1; }
 
 	virtual void BlockFromUnder(float& b) { b = 1.0f; }
+	virtual void BlockFromRight(float& r) { r = 1.0f; }
+	virtual void BlockFromLeft(float& l) { l = -1.0f; }
 
 
 
