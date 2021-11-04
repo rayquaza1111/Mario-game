@@ -133,6 +133,12 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 		DebugOut(L">>> Mario Touch mushroom >>> \n");
 		p->SetState(MUSHROOM_STATE_RISING);
 	}
+
+	if (p->GetState() == MUSHROOM_STATE_WALKING)
+	{
+		SetLevel(MARIO_LEVEL_BIG);
+		e->obj->Delete();
+	}
 }
 
 
