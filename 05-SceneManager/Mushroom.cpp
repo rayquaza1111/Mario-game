@@ -6,7 +6,7 @@ CMushroom::CMushroom(float x, float y) :CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = 0;
-	y_start = y;
+	start_y = y;
 	SetState(MUSHROOM_STATE_IDLE);
 }
 
@@ -31,7 +31,7 @@ void CMushroom::OnNoCollision(DWORD dt)
 {
 	x += vx * dt;
 	y += vy * dt;
-	if (this->y < y_start - 16.0f && GetState() == MUSHROOM_STATE_RISING)
+	if (this->y < start_y - 16.0f && GetState() == MUSHROOM_STATE_RISING)
 	{
 		SetState(MUSHROOM_STATE_WALKING);
 	}

@@ -1,14 +1,17 @@
 #include "Goomba.h"
+#include "debug.h"
 
 CGoomba::CGoomba(float x, float y, int level):CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
+
 	die_start = -1;
 	start_x = x;
 	start_y = y;
-	SetState(GOOMBA_STATE_FLYING);
+	SetState(GOOMBA_STATE_WALKING);
 	SetLevel(level);
+	mark_x = 0;
 }
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -51,10 +54,50 @@ void CGoomba::OnNoCollision(DWORD dt)
 	x += vx * dt;
 	y += vy * dt;
 
-	/*if (this->level == GOOMBA_LEVEL_RED && nx > 0 && x - start_x > 2.0f)
+	
+
+	if (mark_x == 20 && level == 2)
+	{
+		SetState(GOOMBA_STATE_BOUNCE);
+		if (this->y < start_y - 10.0f)
+		{
+			SetState(GOOMBA_STATE_WALKING);
+		}
+		mark_x ++;
+	}
+
+	if (mark_x == 40 && level == 2)
+	{
+		SetState(GOOMBA_STATE_BOUNCE);
+		if (this->y < start_y - 10.0f)
+		{
+			SetState(GOOMBA_STATE_WALKING);
+		}
+		mark_x++;
+	}
+
+
+
+	if (mark_x == 60 && level == 2)
 	{
 		SetState(GOOMBA_STATE_FLYING);
-	}*/
+		if (this->y < start_y - 28.0f)
+		{
+			SetState(GOOMBA_STATE_WALKING);
+		}
+		mark_x = 0;
+	}
+	else 
+	{
+		mark_x++;
+		if (this->y < start_y - 28.0f )
+		{
+			SetState(GOOMBA_STATE_WALKING);
+
+			mark_x = 0;
+		}
+	}
+
 };
 
 void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -105,33 +148,37 @@ void CGoomba::SetState(int state)
 			if (nx > 0)
 			{
 				vx = GOOMBA_WALKING_SPEED;
+
 			}
 			else
 			{
 				vx = -GOOMBA_WALKING_SPEED;
+
 			}
 			break;
 		case GOOMBA_STATE_FLYING:
-			if (nx > 0)
+			if (vx > 0)
 			{
-				vx = GOOMBA_WALKING_SPEED;
-				vy = -GOOMBA_FLYING_SPEED;
+				nx = 1;
 			}
 			else
 			{
-				vx = -GOOMBA_WALKING_SPEED;
+				nx = -1;
 			}
-
-			/*if (this->y < start_y - 5.0f)
-			{
-				vy = 0;
-			}
-			else
-			{
-				vy = -GOOMBA_FLYING_SPEED;
-			}*/
-	
+			vy = -GOOMBA_FLYING_SPEED;
 			break;
+		case GOOMBA_STATE_BOUNCE:
+			if (vx > 0)
+			{
+				nx = 1;
+			}
+			else
+			{
+				nx = -1;
+			}
+			vy = -GOOMBA_BOUNCE_SPEED;
+
+
 	}
 }
 
@@ -153,17 +200,20 @@ int CGoomba::GetAniIdNormal()
 
 int CGoomba::GetAniIdRed()
 {
-	int aniId = -1;
-	if (vy < 0)
+	int aniId = ID_ANI_REDGOOMBA_WALKING;
+	if (this->GetState() == GOOMBA_STATE_FLYING)
 	{
 		aniId = ID_ANI_REDGOOMBA_FLYING;
+	}
+	else if ( this->GetState() == GOOMBA_STATE_BOUNCE)
+	{
+		aniId = ID_ANI_REDGOOMBA_BOUNCING;
 	}
 	else
 	{
 		aniId = ID_ANI_REDGOOMBA_WALKING;
 	}
 
-	if (aniId == -1) aniId = ID_ANI_REDGOOMBA_WALKING;
 
 	return aniId;
 }

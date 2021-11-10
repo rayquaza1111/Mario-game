@@ -21,7 +21,7 @@
 class CMushroom : public CGameObject {
 protected:
 	float ax, ay;
-	float y_start;
+	float start_y;
 public:
 	CMushroom(float x, float y);
 	void Render();
@@ -36,4 +36,5 @@ public:
 		return 1;
 	};
 	virtual void SetState(int state);
+	int nx = 1;
 };
