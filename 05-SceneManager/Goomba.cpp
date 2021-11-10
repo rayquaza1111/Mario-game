@@ -1,28 +1,48 @@
 #include "Goomba.h"
 
-CGoomba::CGoomba(float x, float y):CGameObject(x, y)
+CGoomba::CGoomba(float x, float y, int level):CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
 	die_start = -1;
-	SetState(GOOMBA_STATE_WALKING);
+	start_x = x;
+	start_y = y;
+	SetState(GOOMBA_STATE_FLYING);
+	SetLevel(level);
 }
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
-	if (state == GOOMBA_STATE_DIE)
+	if (this->level == GOOMBA_LEVEL_NORMAL)
 	{
-		left = x - GOOMBA_BBOX_WIDTH/2;
-		top = y - GOOMBA_BBOX_HEIGHT_DIE/2;
-		right = left + GOOMBA_BBOX_WIDTH;
-		bottom = top + GOOMBA_BBOX_HEIGHT_DIE;
+		if (state == GOOMBA_STATE_DIE)
+		{
+			left = x - GOOMBA_BBOX_WIDTH / 2;
+			top = y - GOOMBA_BBOX_HEIGHT_DIE / 2;
+			right = left + GOOMBA_BBOX_WIDTH;
+			bottom = top + GOOMBA_BBOX_HEIGHT_DIE;
+		}
+		if (state == GOOMBA_STATE_WALKING)
+		{
+			left = x - GOOMBA_BBOX_WIDTH / 2;
+			top = y - GOOMBA_BBOX_HEIGHT / 2;
+			right = left + GOOMBA_BBOX_WIDTH;
+			bottom = top + GOOMBA_BBOX_HEIGHT;
+		}
+		else
+		{
+			left = x - GOOMBA_BBOX_WIDTH / 2;
+			top = y - GOOMBA_BBOX_HEIGHT / 2;
+			right = left + GOOMBA_BBOX_WIDTH;
+			bottom = top + GOOMBA_BBOX_HEIGHT;
+		}
 	}
-	else
-	{ 
-		left = x - GOOMBA_BBOX_WIDTH/2;
-		top = y - GOOMBA_BBOX_HEIGHT/2;
-		right = left + GOOMBA_BBOX_WIDTH;
-		bottom = top + GOOMBA_BBOX_HEIGHT;
+	if (this->level == GOOMBA_LEVEL_RED)
+	{
+		left = x - GOOMBARED_BBOX_WIDTH / 2;
+		top = y - GOOMBARED_BBOX_HEIGHT / 2;
+		right = left + GOOMBARED_BBOX_WIDTH;
+		bottom = top + GOOMBARED_BBOX_HEIGHT;
 	}
 }
 
@@ -30,6 +50,11 @@ void CGoomba::OnNoCollision(DWORD dt)
 {
 	x += vx * dt;
 	y += vy * dt;
+
+	/*if (this->level == GOOMBA_LEVEL_RED && nx > 0 && x - start_x > 2.0f)
+	{
+		SetState(GOOMBA_STATE_FLYING);
+	}*/
 };
 
 void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -63,17 +88,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 }
 
 
-void CGoomba::Render()
-{
-	int aniId = ID_ANI_GOOMBA_WALKING;
-	if (state == GOOMBA_STATE_DIE) 
-	{
-		aniId = ID_ANI_GOOMBA_DIE;
-	}
-
-	CAnimations::GetInstance()->Get(aniId)->Render(x,y);
-	RenderBoundingBox();
-}
 
 void CGoomba::SetState(int state)
 {
@@ -88,7 +102,86 @@ void CGoomba::SetState(int state)
 			ay = 0; 
 			break;
 		case GOOMBA_STATE_WALKING: 
-			vx = -GOOMBA_WALKING_SPEED;
+			if (nx > 0)
+			{
+				vx = GOOMBA_WALKING_SPEED;
+			}
+			else
+			{
+				vx = -GOOMBA_WALKING_SPEED;
+			}
+			break;
+		case GOOMBA_STATE_FLYING:
+			if (nx > 0)
+			{
+				vx = GOOMBA_WALKING_SPEED;
+				vy = -GOOMBA_FLYING_SPEED;
+			}
+			else
+			{
+				vx = -GOOMBA_WALKING_SPEED;
+			}
+
+			/*if (this->y < start_y - 5.0f)
+			{
+				vy = 0;
+			}
+			else
+			{
+				vy = -GOOMBA_FLYING_SPEED;
+			}*/
+	
 			break;
 	}
+}
+
+void CGoomba::SetLevel(int l)
+{
+	// Adjust position to avoid falling off platform
+	if (this->level == GOOMBA_LEVEL_NORMAL)
+	{
+		y -= (GOOMBARED_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT) / 2;
+	}
+	level = l;
+}
+
+int CGoomba::GetAniIdNormal()
+{
+	int aniId = ID_ANI_GOOMBA_WALKING;
+	return aniId;
+}
+
+int CGoomba::GetAniIdRed()
+{
+	int aniId = -1;
+	if (vy < 0)
+	{
+		aniId = ID_ANI_REDGOOMBA_FLYING;
+	}
+	else
+	{
+		aniId = ID_ANI_REDGOOMBA_WALKING;
+	}
+
+	if (aniId == -1) aniId = ID_ANI_REDGOOMBA_WALKING;
+
+	return aniId;
+}
+
+
+
+void CGoomba::Render()
+{
+	CAnimations* animations = CAnimations::GetInstance();
+	int aniId = -1;
+
+	if (state == GOOMBA_STATE_DIE)
+		aniId = ID_ANI_GOOMBA_DIE;
+	else if (level == GOOMBA_LEVEL_RED)
+		aniId = GetAniIdRed();
+	else if (level == GOOMBA_LEVEL_NORMAL)
+		aniId = GetAniIdNormal();
+
+	animations->Get(aniId)->Render(x, y);
+	RenderBoundingBox();
 }

@@ -122,7 +122,10 @@ void CMario::OnCollisionWithTopbox(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithQuestionblock(LPCOLLISIONEVENT e)
 {
 	CQuestionblock* p = (CQuestionblock*)e->obj;
-	p->SetState(QUESTIONBLOCK_STATE_IDLE);
+	if (p->GetState() == QUESTIONBLOCK_STATE_ACTIVE && e->ny > 0)
+	{
+		p->SetState(QUESTIONBLOCK_STATE_BOUNCE);
+	}
 }
 
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
@@ -281,7 +284,7 @@ void CMario::Render()
 
 	animations->Get(aniId)->Render(x, y);
 
-	//RenderBoundingBox();
+	RenderBoundingBox();
 	
 	DebugOutTitle(L"Coins: %d", coin);
 }

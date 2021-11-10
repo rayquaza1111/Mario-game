@@ -14,6 +14,7 @@
 #include "Topbox.h"
 #include "Nocollision.h"
 #include "Mushroom.h"
+#include "Goomba.h"
 
 #include "SampleKeyEventHandler.h"
 
@@ -121,7 +122,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;*/
-	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
+	case OBJECT_TYPE_GOOMBA: /*obj = new CGoomba(x,y); break;*/
+	{
+		int level = atoi(tokens[3].c_str());
+		obj = new CGoomba(x, y, level);
+		break;
+	}
 	case OBJECT_TYPE_BRICK: 
 	{
 		int spriteid = atoi(tokens[3].c_str());
