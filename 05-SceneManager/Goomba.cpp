@@ -177,6 +177,7 @@ void CGoomba::SetState(int state)
 				nx = -1;
 			}
 			vy = -GOOMBA_BOUNCE_SPEED;
+			break;
 
 
 	}

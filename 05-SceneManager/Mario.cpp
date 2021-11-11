@@ -11,6 +11,7 @@
 #include "Topbox.h"
 #include "Questionblock.h"
 #include "Mushroom.h"
+#include "Koopa.h"
 
 #include "Collision.h"
 
@@ -64,6 +65,9 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithQuestionblock(e);
 	else if (dynamic_cast<CMushroom*>(e->obj))
 		OnCollisionWithMushroom(e);
+	else if (dynamic_cast<CKoopa*>(e->obj))
+		OnCollisionWithKoopa(e);
+
 	
 
 }
@@ -146,6 +150,43 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 		SetLevel(MARIO_LEVEL_BIG);
 		e->obj->Delete();
 	}
+
+}
+
+void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
+{
+	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+
+
+	if (e->ny < 0 && koopa->GetState() == KOOPA_STATE_WALKING)
+	{
+		vy = -0.5f;
+		koopa->SetState(KOOPA_STATE_IDLING);
+	}
+	else if (e->ny < 0 && koopa->GetState() == KOOPA_STATE_IDLING)
+	{
+		vy = -0.5f;
+		koopa->SetState(KOOPA_STATE_ROLLING);
+	}
+
+	if (untouchable == 0)
+	{
+		if (koopa->GetState() == KOOPA_STATE_ROLLING)
+		{
+			if (level > MARIO_LEVEL_SMALL)
+			{
+				level = MARIO_LEVEL_SMALL;
+				StartUntouchable();
+			}
+			else
+			{
+				DebugOut(L">>> Mario DIE >>> \n");
+				SetState(MARIO_STATE_DIE);
+			}
+		}
+	}
+
+
 }
 
 

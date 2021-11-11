@@ -10,6 +10,7 @@ tunnel.txt
 topbox.txt
 nocollision.txt
 mushroom.txt
+koopa.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -143,6 +144,9 @@ mushroom.txt
 2	600	164	1
 2	832	148	2
 2	880	148	1
+
+#Koopa
+11	560	140
 
 
 

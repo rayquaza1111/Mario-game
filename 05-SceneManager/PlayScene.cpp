@@ -15,6 +15,7 @@
 #include "Nocollision.h"
 #include "Mushroom.h"
 #include "Goomba.h"
+#include "Koopa.h"
 
 #include "SampleKeyEventHandler.h"
 
@@ -142,6 +143,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 	case OBJECT_TYPE_MUSHROOM: obj = new CMushroom(x, y); break;
+	case OBJECT_TYPE_KOOPA: obj = new CKoopa(x, y); break;
 	case OBJECT_TYPE_QUESTIONBLOCK: obj = new CQuestionblock(x, y); break;
 
 	case OBJECT_TYPE_PLATFORM:
