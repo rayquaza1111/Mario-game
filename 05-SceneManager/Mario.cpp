@@ -155,7 +155,10 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
+
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+
+	DebugOut(L">>> Kooopa touch Mario >>> \n");
 
 
 	if (e->ny < 0 && koopa->GetState() == KOOPA_STATE_WALKING)
@@ -167,6 +170,18 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	{
 		vy = -0.5f;
 		koopa->SetState(KOOPA_STATE_ROLLING);
+	}
+	else if (e->nx > 0 && koopa->GetState() == KOOPA_STATE_IDLING)
+	{
+		StartUntouchable();
+		koopa->SetState(KOOPA_STATE_ROLLING);
+		koopa->nx = -1;
+	}
+	else if (e->nx < 0 && koopa->GetState() == KOOPA_STATE_IDLING)
+	{
+		StartUntouchable();
+		koopa->SetState(KOOPA_STATE_ROLLING);
+		koopa->nx = 1;
 	}
 
 	if (untouchable == 0)
@@ -184,6 +199,20 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 				SetState(MARIO_STATE_DIE);
 			}
 		}
+		else if (koopa->GetState() == KOOPA_STATE_WALKING)
+		{
+			if (level > MARIO_LEVEL_SMALL)
+			{
+				level = MARIO_LEVEL_SMALL;
+				StartUntouchable();
+			}
+			else
+			{
+				DebugOut(L">>> Mario DIE >>> \n");
+				SetState(MARIO_STATE_DIE);
+			}
+		}
+		
 	}
 
 

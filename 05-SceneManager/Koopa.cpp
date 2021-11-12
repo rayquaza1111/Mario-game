@@ -1,5 +1,9 @@
 #include "Koopa.h"
+
 #include "debug.h"
+#include "Goomba.h"
+#include "Collision.h"
+#include <algorithm>
 
 CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 {
@@ -34,13 +38,21 @@ void CKoopa::OnNoCollision(DWORD dt)
 	x += vx * dt;
 	y += vy * dt;
 
+	/*if (this->GetState() == KOOPA_STATE_WALKING)
+	{
+		DebugOut(L">>> Koopa Walking \n");
+	}
+	else if (this->GetState() == KOOPA_STATE_ROLLING)
+	{
+		DebugOut(L">>> Koopa Rolling \n");
+	}*/
 
 
 };
 
 void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	if (!e->obj->IsBlocking()) return;
+	/*if (!e->obj->IsBlocking()) return;*/
 	if (dynamic_cast<CKoopa*>(e->obj)) return;
 
 	if (e->ny != 0)
@@ -52,6 +64,31 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		vx = -vx;
 		nx = -nx;
 	}
+
+	if (e->nx != 0)
+	{
+		DebugOut(L">>> Touch \n");
+	}
+
+	if (dynamic_cast<CGoomba*>(e->obj))
+		OnCollisionWithGoomba(e);
+}
+
+void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
+{
+
+	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+	DebugOut(L">>> Kooopa touch Goomba >>> \n");
+
+	
+	if (e->nx != 0)
+	{
+		if (goomba->GetState() != GOOMBA_STATE_DIE && this->GetState() == KOOPA_STATE_ROLLING)
+		{
+			goomba->SetState(GOOMBA_STATE_DIE);
+		}
+	}
+
 }
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

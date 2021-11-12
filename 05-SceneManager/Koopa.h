@@ -28,6 +28,8 @@
 
 class CKoopa : public CGameObject
 {
+private:
+	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 
 protected:
 	float ax;
@@ -43,17 +45,20 @@ public:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
-	virtual int IsCollidable() { return 1; };
+	virtual int IsCollidable() { return 1; }
 	virtual int IsBlocking() { return 0; }
-	virtual void OnNoCollision(DWORD dt);
 
+	virtual void OnNoCollision(DWORD dt);
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 
 	CKoopa(float x, float y);
-
 	virtual void SetState(int state);
 
 	int GetAniId();
+
+
+
+	int nx;
 
 
 };

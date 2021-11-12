@@ -1,6 +1,8 @@
 #include "Goomba.h"
 #include "debug.h"
 
+#include "Koopa.h"
+
 CGoomba::CGoomba(float x, float y, int level):CGameObject(x, y)
 {
 	this->ax = 0;
