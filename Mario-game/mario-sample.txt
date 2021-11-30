@@ -1,0 +1,22 @@
+[SETTINGS]
+start	3
+width	320
+height	240
+
+#id	type	file
+# type: 0: intro, 1: play scene 
+[SCENES]
+0	intro.txt
+1	Scenes\scene01.txt
+2	Scenes\scene02.txt
+3	Scenes\scene-test.txt
+
+# id	file 
+[TEXTURES]
+-100	textures\bbox.png
+0	textures\mario_2.png
+10	textures\enemies.png
+11	textures\enemies_2.png
+20	textures\misc.png
+21	textures\misc_2.png
+30	textures\tiles.png
