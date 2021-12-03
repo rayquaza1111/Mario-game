@@ -8,11 +8,13 @@ void CBrick::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
 	
-	if (type == BRICK_TYPE_DISABLE)
+	if (type == BRICK_TYPE_DISABLED)
 		aniId = ID_ANI_BRICK_TYPE_DISABLE;
 	else if (type == BRICK_TYPE_NORMAL)
 		aniId = ID_ANI_BRICK_TYPE_NORMAL;
-	else if (type == BRICK_TYPE_QUESTION)
+	else if (type == BRICK_TYPE_QUESTIONCOIN)
+		aniId = ID_ANI_BRICK_TYPE_QUESTION;
+	else if (type == BRICK_TYPE_QUESTIONITEM)
 		aniId = ID_ANI_BRICK_TYPE_QUESTION;
 	animations->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
@@ -29,20 +31,19 @@ void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (this->y > start_y - 1 && GetState() == BRICK_STATE_BOUNCING)
 	{
-		y = start_y;
-		CGameObject* obj = NULL;
+		//y = start_y;
+		//CGameObject* obj = NULL;
 		SetState(BRICK_STATE_IDLING);
-		switch (itemId)
+
+	/*	if (this->type == BRICK_TYPE_QUESTIONCOIN)
 		{
-		case 1: 
-			obj = new CMushroom(x, y);
-			break;
-		case 2:
 			obj = new CDCoin(x, y, 0);
-			break;
+		}
+		else if(this->type == BRICK_TYPE_QUESTIONITEM)
+		{
 		}
 		obj->SetPosition(x, y);
-		((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
+		((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);*/
 	}
 
 
@@ -59,6 +60,8 @@ void CBrick::SetState(int state)
 	{
 	case BRICK_STATE_IDLING:
 		vy = 0.0f;
+		x = start_x;
+		y = start_y;
 		break;
 	case BRICK_STATE_BOUNCING:
 		vy = - BRICK_BOUNCING_DEFLECT_Y;

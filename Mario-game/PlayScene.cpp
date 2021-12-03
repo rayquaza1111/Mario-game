@@ -146,8 +146,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BRICK: 
 	{
 		int _type = atoi(tokens[3].c_str());
-		int _itemId = atoi(tokens[4].c_str());
-		obj = new CBrick(x, y, _type, _itemId); 
+		obj = new CBrick(x, y, _type); 
 		break;
 	}
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;

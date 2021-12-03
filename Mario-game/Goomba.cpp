@@ -7,6 +7,7 @@ CGoomba::CGoomba(float x, float y, int level) :CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
+	this->nx = -1;
 
 	die_start = -1;
 	start_y = y;

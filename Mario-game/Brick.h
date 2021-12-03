@@ -13,9 +13,11 @@
 
 #define BRICK_BOUNCING_DEFLECT_Y 0.2f
 
-#define BRICK_TYPE_DISABLE 1
-#define BRICK_TYPE_NORMAL 2
-#define BRICK_TYPE_QUESTION 3
+#define BRICK_TYPE_QUESTIONCOIN 1
+#define BRICK_TYPE_QUESTIONITEM 2
+#define BRICK_TYPE_HIDDENCOIN 3
+#define BRICK_TYPE_NORMAL 4
+#define BRICK_TYPE_DISABLED 5
 
 #define BRICK_STATE_BOUNCING 10
 #define BRICK_STATE_IDLING 20
@@ -26,15 +28,16 @@
 
 class CBrick : public CGameObject {
 	float start_y;
+	float start_x;
 	int type;
 	int itemId;
 public:
-	CBrick(float x, float y, int _type, int _itemId) : CGameObject(x, y) 
+	CBrick(float x, float y, int _type) : CGameObject(x, y) 
 	{ 
 		this->type = _type; 
-		this->itemId = _itemId;
 		start_y = y; 
 		SetState(BRICK_STATE_IDLING);
+		start_x = x;
 	}
 	virtual void Render();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

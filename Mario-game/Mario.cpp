@@ -11,6 +11,7 @@
 #include "Portal.h"
 #include "Brick.h"
 #include "Mushroom.h"
+#include "Leaf.h"
 
 #include "Collision.h"
 
@@ -82,24 +83,37 @@ void CMario::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 {
 	CBrick* brick = dynamic_cast<CBrick*>(e->obj);
 
+
 	if (e->ny > 0)
 	{
-		// Big mario can hit normal brick
-		if (level == MARIO_LEVEL_BIG)
+		if (brick->GetType() == BRICK_TYPE_QUESTIONCOIN)
 		{
-			if (brick->GetType() == BRICK_TYPE_QUESTION)
-			{
-				brick->SetState(BRICK_STATE_BOUNCING);
-				brick->SetType(BRICK_TYPE_DISABLE);
-			}
+			brick->SetState(BRICK_STATE_BOUNCING);
+			brick->SetType(BRICK_TYPE_DISABLED);
+			CGameObject* obj = NULL;
+			obj = new CDCoin(brick->Get_x(), brick->Get_y(), 0);
+			obj->SetPosition(brick->Get_x(), brick->Get_y());
+			((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
 		}
-		// Small mario can only hit the question brick
-		else if (level == MARIO_LEVEL_SMALL)
+		else if (brick->GetType() == BRICK_TYPE_QUESTIONITEM)
 		{
-			if (brick->GetType() == BRICK_TYPE_QUESTION)
+			if (level == MARIO_LEVEL_SMALL)
 			{
 				brick->SetState(BRICK_STATE_BOUNCING);
-				brick->SetType(BRICK_TYPE_DISABLE);
+				brick->SetType(BRICK_TYPE_DISABLED);
+				CGameObject* obj = NULL;
+				obj = new CMushroom(brick->Get_x(), brick->Get_y());
+				obj->SetPosition(brick->Get_x(), brick->Get_y());
+				((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
+			}
+			else if (level > MARIO_LEVEL_SMALL)
+			{
+				brick->SetState(BRICK_STATE_BOUNCING);
+				brick->SetType(BRICK_TYPE_DISABLED);
+				CGameObject* obj = NULL;
+				obj = new CLeaf(brick->Get_x(), brick->Get_y());
+				obj->SetPosition(brick->Get_x(), brick->Get_y());
+				((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
 			}
 		}
 	}
