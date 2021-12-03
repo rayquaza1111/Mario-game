@@ -77,7 +77,11 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithBrick(e);
 	else if (dynamic_cast<CMushroom*>(e->obj))
 		OnCollisionWithMushroom(e);
+	else if (dynamic_cast<CLeaf*>(e->obj))
+		OnCollisionWithLeaf(e);
+
 }
+
 
 void CMario::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 {
@@ -146,7 +150,12 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 		{
 			if (goomba->GetState() != GOOMBA_STATE_DIE)
 			{
-				if (level > MARIO_LEVEL_SMALL)
+				if (level == MARIO_LEVEL_RACOON)
+				{
+					level = MARIO_LEVEL_BIG;
+					StartUntouchable();
+				}
+				else if (level == MARIO_LEVEL_BIG)
 				{
 					level = MARIO_LEVEL_SMALL;
 					StartUntouchable();
@@ -264,6 +273,18 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 			LifeUp();
 			e->obj->Delete();
 		}
+	}
+}
+
+void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
+{
+	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
+
+	// Eat mushroom
+	if (leaf->GetState() == LEAF_STATE_FALLING)
+	{
+			SetLevel(MARIO_LEVEL_RACOON);
+			e->obj->Delete();
 	}
 }
 
@@ -390,6 +411,90 @@ int CMario::GetAniIdBig()
 	return aniId;
 }
 
+int CMario::GetAniIdRacoon()
+{
+	int aniId = -1;
+	if (!isOnPlatform)
+	{
+		if (nx >= 0)
+		{
+			if (abs(ax) == MARIO_ACCEL_RUN_X)
+				aniId = ID_ANI_MARIO_RACCOON_JUMP_RUN_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_RACCOON_JUMP_WALK_RIGHT;
+			if (isHolding)
+				aniId = ID_ANI_MARIO_RACCOON_HOLDING_JUMP_RIGHT;
+		}
+		else
+		{
+			if (abs(ax) == MARIO_ACCEL_RUN_X)
+				aniId = ID_ANI_MARIO_RACCOON_JUMP_RUN_LEFT;
+			else
+				aniId = ID_ANI_MARIO_RACCOON_JUMP_WALK_LEFT;
+			if (isHolding)
+				aniId = ID_ANI_MARIO_RACCOON_HOLDING_JUMP_LEFT;
+		}
+	}
+	else
+		if (isSitting)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_RACCOON_SITTING_RIGHT;
+			else
+				aniId = ID_ANI_MARIO_RACCOON_SITTING_LEFT;
+		}
+		else
+			if (vx == 0)
+			{
+				if (nx > 0)
+				{
+					aniId = ID_ANI_MARIO_RACCOON_IDLE_RIGHT;
+					if (isHolding)
+					{
+						aniId = ID_ANI_MARIO_RACCOON_HOLDING_IDLE_RIGHT;
+					}
+				}
+				else
+				{
+					aniId = ID_ANI_MARIO_RACCOON_IDLE_LEFT;
+					if (isHolding)
+					{
+						aniId = ID_ANI_MARIO_RACCOON_HOLDING_IDLE_LEFT;
+					}
+				}
+			}
+			else if (vx > 0)
+			{
+				if (ax < 0)
+					aniId = ID_ANI_MARIO_RACCOON_BRAKING_RIGHT;
+				else if (ax == MARIO_ACCEL_RUN_X)
+				{
+					aniId = ID_ANI_MARIO_RACCOON_RUNNING_RIGHT;
+					if (isHolding)
+						aniId = ID_ANI_MARIO_RACCOON_HOLDING_RUN_RIGHT;
+				}
+				else if (ax == MARIO_ACCEL_WALK_X)
+					aniId = ID_ANI_MARIO_RACCOON_WALKING_RIGHT;
+			}
+			else  if (vx < 0)
+			{
+				if (ax > 0)
+					aniId = ID_ANI_MARIO_RACCOON_BRAKING_LEFT;
+				else if (ax == -MARIO_ACCEL_RUN_X)
+				{
+					aniId = ID_ANI_MARIO_RACCOON_RUNNING_LEFT;
+					if (isHolding)
+						aniId = ID_ANI_MARIO_RACCOON_HOLDING_RUN_LEFT;
+				}
+				else if (ax == -MARIO_ACCEL_WALK_X)
+					aniId = ID_ANI_MARIO_RACCOON_WALKING_LEFT;
+			}
+
+	if (aniId == -1) aniId = ID_ANI_MARIO_RACCOON_IDLE_RIGHT;
+
+	return aniId;
+}
+
 void CMario::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
@@ -403,6 +508,10 @@ void CMario::Render()
 	else if (level == MARIO_LEVEL_SMALL)
 	{
 		aniId = GetAniIdSmall();
+	}
+	else if (level == MARIO_LEVEL_RACOON)
+	{
+		aniId = GetAniIdRacoon();
 	}
 
 	animations->Get(aniId)->Render(x, y);
@@ -497,6 +606,23 @@ void CMario::SetState(int state)
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	if (level == MARIO_LEVEL_BIG)
+	{
+		if (isSitting)
+		{
+			left = x - MARIO_BIG_SITTING_BBOX_WIDTH / 2;
+			top = y - MARIO_BIG_SITTING_BBOX_HEIGHT / 2;
+			right = left + MARIO_BIG_SITTING_BBOX_WIDTH;
+			bottom = top + MARIO_BIG_SITTING_BBOX_HEIGHT;
+		}
+		else
+		{
+			left = x - MARIO_BIG_BBOX_WIDTH / 2;
+			top = y - MARIO_BIG_BBOX_HEIGHT / 2;
+			right = left + MARIO_BIG_BBOX_WIDTH;
+			bottom = top + MARIO_BIG_BBOX_HEIGHT;
+		}
+	}
+	else if (level == MARIO_LEVEL_RACOON) 
 	{
 		if (isSitting)
 		{
