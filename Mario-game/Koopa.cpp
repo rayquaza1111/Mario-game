@@ -1,6 +1,7 @@
 #include "Koopa.h"
 #include "Goomba.h"
 #include "ColourPlatform.h"
+#include "Brick.h"
 
 #include "Mario.h"
 #include "debug.h"
@@ -75,6 +76,30 @@ void CKoopa::OnCollisionWithColourPlatform(LPCOLLISIONEVENT e)
 		}
 }
 
+void CKoopa::OnCollisionWithBrick(LPCOLLISIONEVENT e)
+{
+	CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+	vector<LPGAMEOBJECT> coObjects = ((LPPLAYSCENE)(CGame::GetInstance()->GetCurrentScene()))->GetObjects();
+
+	if (state == KOOPA_STATE_WALKING_LEFT || state == KOOPA_STATE_WALKING_RIGHT)
+
+		for (UINT i = 0; i < coObjects.size(); i++)
+		{
+			if (e->ny < 0 && brick == coObjects[i])
+			{
+				if (brick == coObjects[i])
+				{
+					brick = (CBrick*)coObjects[i];
+					if (x <= brick->GetBeginBrick() - KOOPA_BBOX_WIDTH / 2)
+						SetState(KOOPA_STATE_WALKING_RIGHT);
+					else if (x + KOOPA_BBOX_WIDTH/2 >= brick->GetEndBrick())
+						SetState(KOOPA_STATE_WALKING_LEFT);
+				}
+				vy = 0;
+			}
+		}
+}
+
 
 
 void CKoopa::OnNoCollision(DWORD dt)
@@ -106,6 +131,8 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithGoomba(e);
 	else if (dynamic_cast<CColourPlatform*>(e->obj))
 		OnCollisionWithColourPlatform(e);
+	else if (dynamic_cast<CBrick*>(e->obj))
+		OnCollisionWithBrick(e);
 }
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

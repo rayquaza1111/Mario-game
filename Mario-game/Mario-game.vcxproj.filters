@@ -119,11 +119,11 @@
     <ClCompile Include="DCoin.cpp">
       <Filter>GameObject\Items</Filter>
     </ClCompile>
-    <ClCompile Include="Koopa.cpp">
-      <Filter>GameObject\Items</Filter>
-    </ClCompile>
     <ClCompile Include="Leaf.cpp">
       <Filter>GameObject\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Koopa.cpp">
+      <Filter>GameObject\Enemy\Koopa</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

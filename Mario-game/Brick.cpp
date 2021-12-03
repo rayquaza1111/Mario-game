@@ -16,6 +16,8 @@ void CBrick::Render()
 		aniId = ID_ANI_BRICK_TYPE_QUESTION;
 	else if (type == BRICK_TYPE_QUESTIONITEM)
 		aniId = ID_ANI_BRICK_TYPE_QUESTION;
+	else if (type == BRICK_TYPE_HIDDENCOIN)
+		aniId = ID_ANI_BRICK_TYPE_NORMAL;
 	animations->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
 }

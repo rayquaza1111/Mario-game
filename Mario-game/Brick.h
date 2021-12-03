@@ -48,4 +48,7 @@ public:
 	int GetType() { return type; }
 	void SetType(int _type) { type = _type; }
 	void SetState(int state);
+
+	virtual float GetBeginBrick() { return x; }
+	virtual float GetEndBrick() { return (x + 16); }
 };
