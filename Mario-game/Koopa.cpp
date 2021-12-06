@@ -146,6 +146,12 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	}
 
+	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
+	{
+		isDeleted = true;
+		return;
+	}
+
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
@@ -162,6 +168,8 @@ void CKoopa::Render()
 		aniId = ID_ANI_SHELL_IDLING;
 	else if (state == SHELL_STATE_ROLLING_LEFT || state == SHELL_STATE_ROLLING_RIGHT)
 		aniId = ID_ANI_SHELL_ROLLING;
+	else if (state == KOOPA_STATE_DIE)
+		aniId = ID_ANI_SHELL_IDLING;
 	
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
@@ -188,6 +196,13 @@ void CKoopa::SetState(int state)
 		break;
 	case SHELL_STATE_ROLLING_RIGHT:
 		vx = SHELL_ROLLING_SPEED;
+		break;
+	case KOOPA_STATE_DIE:
+		die_start = GetTickCount64();
+		y += (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_HEIGHT_DIE) / 2;
+		vx = 0;
+		vy = 0;
+		ay = 0;
 		break;
 	}
 }

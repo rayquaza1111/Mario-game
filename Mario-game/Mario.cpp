@@ -143,17 +143,28 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 				DebugOut(L">>> GOOMBA LEVEL %d >>> \n", goomba->GetLevel());
 				goomba->SetLevel(1);
 				goomba->SetState(GOOMBA_STATE_WALKING);
-				//DebugOut(L">>> GOOMBA LEVEL DOWN to %d >>> \n", goomba->GetState());
 			}
 			else 
 				goomba->SetState(GOOMBA_STATE_DIE);
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 	}
-	else if (isAttack)
+	else if (isAttack && e->nx !=0)
 	{
+		untouchable == 1;
 		DebugOut(L">>>  touch goomba by x >>> \n");
-		goomba->SetState(GOOMBA_STATE_DIE);
+		if (goomba->GetState() != GOOMBA_STATE_DIE)
+		{
+			if (goomba->GetLevel() == 2)
+			{
+				DebugOut(L">>> GOOMBA LEVEL %d >>> \n", goomba->GetLevel());
+				goomba->SetLevel(1);
+				goomba->SetState(GOOMBA_STATE_WALKING);
+			}
+			else
+				goomba->SetState(GOOMBA_STATE_DIE);
+		}
+		untouchable == 0;
 	}
 	else // hit by Goomba
 	{
@@ -215,6 +226,11 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 			}
 		}
 		
+	}
+	else if (isAttack)
+	{
+		koopa->SetState(KOOPA_STATE_DIE);
+
 	}
 	else // hit by koopa
 	{
@@ -664,7 +680,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 			}
 			else
 			{
-				left = x - MARIO_BIG_BBOX_WIDTH / 2 + MARIO_TAIL_LENGTH;
+				left = x - MARIO_BIG_BBOX_WIDTH / 2 - MARIO_TAIL_LENGTH;
 				top = y - MARIO_BIG_BBOX_HEIGHT / 2;
 				right = left + MARIO_BIG_BBOX_WIDTH ;
 				bottom = top + MARIO_BIG_BBOX_HEIGHT;
