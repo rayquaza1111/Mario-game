@@ -11,7 +11,7 @@ void CBrick::Render()
 	if (type == BRICK_TYPE_DISABLED)
 		aniId = ID_ANI_BRICK_TYPE_DISABLE;
 	else if (type == BRICK_TYPE_NORMAL)
-		aniId = ID_ANI_BRICK_TYPE_NORMAL;
+		aniId = ID_ANI_BRICK_TYPE_HARD;
 	else if (type == BRICK_TYPE_QUESTIONCOIN)
 		aniId = ID_ANI_BRICK_TYPE_QUESTION;
 	else if (type == BRICK_TYPE_QUESTIONITEM)

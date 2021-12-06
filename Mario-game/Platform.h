@@ -27,7 +27,6 @@ public:
 
 	virtual float GetBeginPlatform() { return x; }
 	virtual float GetEndPlatform() { return (x + length * cellWidth); }
-	virtual int GetX() { return x; }
 	virtual void Render();
 	virtual void Update(DWORD dt) {}
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b);

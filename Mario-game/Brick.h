@@ -25,6 +25,7 @@
 #define ID_ANI_BRICK_TYPE_DISABLE 10000
 #define ID_ANI_BRICK_TYPE_NORMAL 10001
 #define ID_ANI_BRICK_TYPE_QUESTION 10002
+#define ID_ANI_BRICK_TYPE_HARD 10003
 
 class CBrick : public CGameObject {
 	float start_y;

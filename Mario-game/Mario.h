@@ -9,6 +9,7 @@
 #define MARIO_WALKING_SPEED		0.1f
 #define MARIO_RUNNING_SPEED		0.2f
 
+
 #define MARIO_ACCEL_WALK_X	0.0005f
 #define MARIO_ACCEL_RUN_X	0.0007f
 
@@ -32,6 +33,8 @@
 
 #define MARIO_STATE_SIT				600
 #define MARIO_STATE_SIT_RELEASE		601
+
+#define MARIO_STATE_ATTACK	700
 
 
 #pragma region ANIMATION_ID
@@ -111,6 +114,9 @@
 #define ID_ANI_MARIO_RACCOON_BRAKING_RIGHT		2301
 #define ID_ANI_MARIO_RACCOON_BRAKING_LEFT		2300
 
+#define ID_ANI_MARIO_RACOON_ATTACK_RIGHT	2400
+#define ID_ANI_MARIO_RACOON_ATTACK_LEFT	2401
+
 #pragma endregion
 
 #define GROUND_Y 160.0f
@@ -126,6 +132,7 @@
 #define MARIO_BIG_BBOX_HEIGHT 24
 #define MARIO_BIG_SITTING_BBOX_WIDTH  13
 #define MARIO_BIG_SITTING_BBOX_HEIGHT 16
+#define MARIO_TAIL_LENGTH	8
 
 #define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT-MARIO_BIG_SITTING_BBOX_HEIGHT)/2)
 
@@ -134,6 +141,7 @@
 
 
 #define MARIO_UNTOUCHABLE_TIME 2500
+#define MARIO_TIME_ATTACK 240
 
 class CMario : public CGameObject
 {
@@ -148,7 +156,9 @@ class CMario : public CGameObject
 	int untouchable; 
 	ULONGLONG untouchable_start;
 	BOOLEAN isOnPlatform;
-	int coin; 
+	int coin;
+	BOOLEAN isAttack;
+	ULONGLONG timeAttack;
 
 	void OnCollisionWithBrick(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
@@ -180,6 +190,7 @@ public:
 		coin = 0;
 		life = 4;
 		isHolding = false;
+		timeAttack = ULONGLONG(0);
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

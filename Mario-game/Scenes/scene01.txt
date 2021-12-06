@@ -15,7 +15,7 @@ leaf.txt
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
-0	2050	256
+0	10	256
 
 
 #COIN
@@ -37,7 +37,10 @@ leaf.txt
 1	176	368	1	
 1	224	320	1	
 1	240	320	2
-1	2096	400	3	
+1	2096	400	3
+1	656	400	2
+1	704	368	1
+1	1504	352	4 	
 
 #goomba
 2	224	416	1

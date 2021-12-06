@@ -40,9 +40,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		untouchable_start = 0;
 		untouchable = 0;
 	}
+	if (isAttack)
+	{
+		if (GetTickCount64() - timeAttack > MARIO_TIME_ATTACK)
+		{
+			isAttack = false;
+		}
+	}
 
 	isOnPlatform = false;
-
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
@@ -139,10 +145,15 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 				goomba->SetState(GOOMBA_STATE_WALKING);
 				//DebugOut(L">>> GOOMBA LEVEL DOWN to %d >>> \n", goomba->GetState());
 			}
-			else
+			else 
 				goomba->SetState(GOOMBA_STATE_DIE);
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
+	}
+	else if (isAttack)
+	{
+		DebugOut(L">>>  touch goomba by x >>> \n");
+		goomba->SetState(GOOMBA_STATE_DIE);
 	}
 	else // hit by Goomba
 	{
@@ -489,6 +500,12 @@ int CMario::GetAniIdRacoon()
 				else if (ax == -MARIO_ACCEL_WALK_X)
 					aniId = ID_ANI_MARIO_RACCOON_WALKING_LEFT;
 			}
+	if (isAttack)
+	{	
+			if (nx > 0)aniId = ID_ANI_MARIO_RACOON_ATTACK_RIGHT;
+			else aniId = ID_ANI_MARIO_RACOON_ATTACK_LEFT;
+		
+	}
 
 	if (aniId == -1) aniId = ID_ANI_MARIO_RACCOON_IDLE_RIGHT;
 
@@ -591,6 +608,11 @@ void CMario::SetState(int state)
 		vx = 0.0f;
 		break;
 
+	case MARIO_STATE_ATTACK:
+			isAttack = true;
+			timeAttack = GetTickCount64();
+		break;
+
 	case MARIO_STATE_DIE:
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		vx = 0;
@@ -630,6 +652,23 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 			top = y - MARIO_BIG_SITTING_BBOX_HEIGHT / 2;
 			right = left + MARIO_BIG_SITTING_BBOX_WIDTH;
 			bottom = top + MARIO_BIG_SITTING_BBOX_HEIGHT;
+		}
+		if (isAttack)
+		{
+			if (nx > 0)
+			{
+				left = x - MARIO_BIG_BBOX_WIDTH / 2;
+				top = y - MARIO_BIG_BBOX_HEIGHT / 2;
+				right = left + MARIO_BIG_BBOX_WIDTH + MARIO_TAIL_LENGTH;
+				bottom = top + MARIO_BIG_BBOX_HEIGHT;
+			}
+			else
+			{
+				left = x - MARIO_BIG_BBOX_WIDTH / 2 + MARIO_TAIL_LENGTH;
+				top = y - MARIO_BIG_BBOX_HEIGHT / 2;
+				right = left + MARIO_BIG_BBOX_WIDTH ;
+				bottom = top + MARIO_BIG_BBOX_HEIGHT;
+			}
 		}
 		else
 		{
