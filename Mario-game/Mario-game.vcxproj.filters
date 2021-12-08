@@ -125,6 +125,12 @@
     <ClCompile Include="Koopa.cpp">
       <Filter>GameObject\Enemy\Koopa</Filter>
     </ClCompile>
+    <ClCompile Include="TemporaryCoin.cpp">
+      <Filter>GameObject\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="PButton.cpp">
+      <Filter>GameObject\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mario.h">
@@ -218,6 +224,12 @@
       <Filter>GameObject\Items</Filter>
     </ClInclude>
     <ClInclude Include="Leaf.h">
+      <Filter>GameObject\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="TemporaryCoin.h">
+      <Filter>GameObject\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="PButton.h">
       <Filter>GameObject\Items</Filter>
     </ClInclude>
   </ItemGroup>

@@ -17,9 +17,9 @@ void CBrick::Render()
 	else if (type == BRICK_TYPE_QUESTIONITEM)
 		aniId = ID_ANI_BRICK_TYPE_QUESTION;
 	else if (type == BRICK_TYPE_HIDDENCOIN)
-		aniId = ID_ANI_BRICK_TYPE_NORMAL;
+		aniId = ID_ANI_BRICK_TYPE_HIDDENCOIN;
 	else if (type == BRICK_TYPE_PBUTTON)
-		aniId = ID_ANI_BRICK_TYPE_NORMAL;
+		aniId = ID_ANI_BRICK_TYPE_HIDDENCOIN;
 	animations->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
 }
@@ -68,7 +68,7 @@ void CBrick::SetState(int state)
 		y = start_y;
 		break;
 	case BRICK_STATE_BOUNCING:
-		vy = - BRICK_BOUNCING_DEFLECT_Y;
+		vy = -BRICK_BOUNCING_DEFLECT_Y;
 		break;
 	}
 }

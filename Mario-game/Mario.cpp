@@ -12,6 +12,7 @@
 #include "Brick.h"
 #include "Mushroom.h"
 #include "Leaf.h"
+#include "PButton.h"
 
 #include "Collision.h"
 
@@ -85,6 +86,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithMushroom(e);
 	else if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
+	else if (dynamic_cast<CPButton*>(e->obj))
+		OnCollisionWithPButton(e);
 
 }
 
@@ -125,6 +128,23 @@ void CMario::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 				obj->SetPosition(brick->Get_x(), brick->Get_y());
 				((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
 			}
+		}
+	}
+
+	if (isAttack && e->nx !=0)
+	{
+		if (brick->GetType() == BRICK_TYPE_HIDDENCOIN)
+		{
+			DebugOut(L">>> touch brick %d >>> \n");
+			brick->Delete();
+		}
+		if (brick->GetType() == BRICK_TYPE_PBUTTON)
+		{
+			brick->SetType(BRICK_TYPE_DISABLED);
+			CGameObject* obj = NULL;
+			obj = new CPButton(brick->Get_x() , brick->Get_y());
+			obj->SetPosition(brick->Get_x() , brick->Get_y() );
+			((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
 		}
 	}
 }
@@ -200,6 +220,19 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 	{
 		coin->Delete();
 		coin++;
+	}
+}
+
+void CMario::OnCollisionWithPButton(LPCOLLISIONEVENT e)
+{
+	CPButton* pButton = dynamic_cast<CPButton*>(e->obj);
+	if (e->ny < 0)
+	{
+		DebugOut(L">>> TouchButton >>> \n");
+		if (pButton->GetState() != PBUTTON_STATE_PRESSED)
+		{
+			pButton->SetState(PBUTTON_STATE_PRESSED);
+		}
 	}
 }
 
@@ -671,26 +704,16 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		}
 		if (isAttack)
 		{
-			if (nx > 0)
-			{
-				left = x - MARIO_BIG_BBOX_WIDTH / 2;
-				top = y - MARIO_BIG_BBOX_HEIGHT / 2;
-				right = left + MARIO_BIG_BBOX_WIDTH + MARIO_TAIL_LENGTH;
-				bottom = top + MARIO_BIG_BBOX_HEIGHT;
-			}
-			else
-			{
-				left = x - MARIO_BIG_BBOX_WIDTH / 2 - MARIO_TAIL_LENGTH;
-				top = y - MARIO_BIG_BBOX_HEIGHT / 2;
-				right = left + MARIO_BIG_BBOX_WIDTH ;
-				bottom = top + MARIO_BIG_BBOX_HEIGHT;
-			}
+			left = x - MARIO_RACOON_BBOX_WIDTH / 2;
+			top = y - MARIO_BIG_BBOX_HEIGHT / 2;
+			right = left + MARIO_RACOON_BBOX_WIDTH + MARIO_TAIL_LENGTH;
+			bottom = top + MARIO_BIG_BBOX_HEIGHT;
 		}
 		else
 		{
-			left = x - MARIO_BIG_BBOX_WIDTH / 2;
+			left = x - MARIO_RACOON_BBOX_WIDTH / 2;
 			top = y - MARIO_BIG_BBOX_HEIGHT / 2;
-			right = left + MARIO_BIG_BBOX_WIDTH;
+			right = left + MARIO_RACOON_BBOX_WIDTH;
 			bottom = top + MARIO_BIG_BBOX_HEIGHT;
 		}
 	}
