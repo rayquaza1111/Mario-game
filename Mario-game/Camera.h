@@ -1,6 +1,8 @@
 #pragma once
 #include "Map.h"
 #include "GameGlobal.h"
+
+
 class CCamera
 {
 private:
