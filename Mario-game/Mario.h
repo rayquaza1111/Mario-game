@@ -35,6 +35,7 @@
 #define MARIO_STATE_SIT_RELEASE		601
 
 #define MARIO_STATE_ATTACK	700
+#define MARIO_STATE_KICK 701
 
 
 #pragma region ANIMATION_ID
@@ -150,7 +151,6 @@
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
-	BOOLEAN isHolding;
 	float maxVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
@@ -179,6 +179,7 @@ class CMario : public CGameObject
 
 	static CMario* __instance;
 public:
+	BOOLEAN isHolding;
 	static CMario* GetInstance();
 	CMario();
 	CMario(float x, float y) : CGameObject(x, y)
@@ -219,4 +220,5 @@ public:
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	void Attacked();
 };

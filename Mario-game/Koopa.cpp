@@ -1,7 +1,7 @@
 #include "Koopa.h"
 #include "Goomba.h"
-#include "ColourPlatform.h"
 #include "Brick.h"
+#include "ColourPlatform.h"
 
 #include "Mario.h"
 #include "debug.h"
@@ -9,10 +9,15 @@
 
 CKoopa::CKoopa(float x, float y, int lvl) :CGameObject(x, y)
 {
+	die_start = -1;
+	isBeingHeld = false;
+	isVulnerable = false;
+	last_state = -1;
 	this->level = lvl;
 	this->ax = 0;
 	this->ay = KOOPA_GRAVITY;
-	die_start = -1;
+	wakingUp_timer = -1;
+	wakingUp_timeout = -1;
 	switch (this->level)
 	{
 	case 1:
@@ -34,7 +39,7 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	// kill goomba by hit
 	if (goomba->GetState() != GOOMBA_STATE_DIE)
 		if (state == SHELL_STATE_ROLLING_LEFT || state == SHELL_STATE_ROLLING_RIGHT)
-			if ( e->nx != 0)
+			if (e->nx != 0)
 			{
 				goomba->SetState(GOOMBA_STATE_DIE);
 			}
@@ -46,29 +51,29 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	if (state == SHELL_STATE_ROLLING_LEFT || state == SHELL_STATE_ROLLING_RIGHT)
 		if (koopa->GetState() != SHELL_STATE_ROLLING_LEFT || koopa->GetState() != SHELL_STATE_ROLLING_RIGHT)
 			return;
-			/*if (e->nx != 0)
-			{
-				koopa->SetState(GOOMBA_STATE_DIE);
-			}*/
+	/*if (e->nx != 0)
+	{
+		koopa->SetState(GOOMBA_STATE_DIE);
+	}*/
 }
 
-void CKoopa::OnCollisionWithColourPlatform(LPCOLLISIONEVENT e)
+void CKoopa::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 {
-	CColourPlatform* cPlatform = dynamic_cast<CColourPlatform*>(e->obj);
+	CPlatform* platform = dynamic_cast<CPlatform*>(e->obj);
 	vector<LPGAMEOBJECT> coObjects = ((LPPLAYSCENE)(CGame::GetInstance()->GetCurrentScene()))->GetObjects();
 
 	if (state == KOOPA_STATE_WALKING_LEFT || state == KOOPA_STATE_WALKING_RIGHT)
 
 		for (UINT i = 0; i < coObjects.size(); i++)
 		{
-			if (e->ny < 0 && cPlatform == coObjects[i])
+			if (e->ny < 0 && platform == coObjects[i])
 			{
-				if (cPlatform == coObjects[i])
+				if (platform == coObjects[i])
 				{
-					cPlatform = (CColourPlatform*)coObjects[i];
-					if (x <= cPlatform->GetBeginPlatform() )
+					platform = (CPlatform*)coObjects[i];
+					if (x <= platform->GetBeginPlatform() - KOOPA_BBOX_WIDTH / 2)
 						SetState(KOOPA_STATE_WALKING_RIGHT);
-					else if (x + KOOPA_BBOX_WIDTH >= cPlatform->GetEndPlatform())
+					else if (x + KOOPA_BBOX_WIDTH / 2 >= platform->GetEndPlatform())
 						SetState(KOOPA_STATE_WALKING_LEFT);
 				}
 				vy = 0;
@@ -92,7 +97,7 @@ void CKoopa::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 					brick = (CBrick*)coObjects[i];
 					if (x <= brick->GetBeginBrick() - KOOPA_BBOX_WIDTH / 2)
 						SetState(KOOPA_STATE_WALKING_RIGHT);
-					else if (x + KOOPA_BBOX_WIDTH/2 >= brick->GetEndBrick())
+					else if (x + KOOPA_BBOX_WIDTH / 2 >= brick->GetEndBrick())
 						SetState(KOOPA_STATE_WALKING_LEFT);
 				}
 				vy = 0;
@@ -129,8 +134,8 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopa(e);
 	else if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
-	else if (dynamic_cast<CColourPlatform*>(e->obj))
-		OnCollisionWithColourPlatform(e);
+	else if (dynamic_cast<CPlatform*>(e->obj))
+		OnCollisionWithPlatform(e);
 	else if (dynamic_cast<CBrick*>(e->obj))
 		OnCollisionWithBrick(e);
 }
@@ -140,17 +145,75 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vy += ay * dt;
 	vx += ax * dt;
 
-	if ((state == SHELL_STATE_IDLING) && (GetTickCount64() - die_start > SHELL_IDLING_TIMEOUT))
-	{
-		isDeleted = true;
-		return;
-	}
 
 	if ((state == KOOPA_STATE_DIE) && (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
 		return;
 	}
+
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	//Start counting down to wake up
+	if ((state == SHELL_STATE_IDLING) && (GetTickCount64() - wakingUp_timer > SHELL_IDLING_TIMEOUT))
+	{
+		SetState(KOOPA_STATE_WAKING);
+		wakingUp_timer = 0;
+	}
+	//Waking up timeout
+	if ((state == KOOPA_STATE_WAKING) && (GetTickCount64() - wakingUp_timeout > KOOPA_STANDUP_TIMEOUT))
+	{
+		// waking up on ground
+		if (!mario->isHolding && !isBeingHeld)
+		{
+			Wakeup();
+		}
+		else // waking up on Mario's hands
+		{
+			mario->Attacked();
+			mario->isHolding = false;
+			if (mario->Get_nx() > 0)
+				SetState(KOOPA_STATE_WALKING_RIGHT);
+			else SetState(KOOPA_STATE_WALKING_LEFT);
+		}
+		isVulnerable = false;
+		isBeingHeld = false;
+		wakingUp_timeout = 0;
+	}
+
+
+	if (!mario->isHolding && isBeingHeld && isVulnerable)
+	{
+		isBeingHeld = false;
+		isVulnerable = false;
+		if (state == SHELL_STATE_IDLING && !isBeingHeld && !isVulnerable)
+		{
+			nx = mario->Get_nx();
+			if (nx > 0)
+				SetState(SHELL_STATE_ROLLING_RIGHT);
+			else if (nx < 0)
+				SetState(SHELL_STATE_ROLLING_LEFT);
+		}
+	}
+	//when being held by mario
+	if (isBeingHeld)
+	{
+		//set height of koopashell
+		if (mario->GetLevel() != MARIO_LEVEL_SMALL)
+			y = mario->Get_y() - 1; //TODO change const number
+		else y = mario->Get_y() + 5;
+		vy = 0;
+		float tmp = mario->Get_nx();
+		x = mario->Get_x() + tmp * (MARIO_BIG_BBOX_WIDTH);
+		if (mario->GetLevel() == MARIO_LEVEL_SMALL)
+		{
+			if (tmp > 0)
+				x = mario->Get_x() + tmp * (MARIO_SMALL_BBOX_WIDTH);
+			else
+				x = mario->Get_x() + tmp * (KOOPA_BBOX_WIDTH)+3;
+			y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
+		}
+	}
+
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -168,12 +231,11 @@ void CKoopa::Render()
 		aniId = ID_ANI_SHELL_IDLING;
 	else if (state == SHELL_STATE_ROLLING_LEFT || state == SHELL_STATE_ROLLING_RIGHT)
 		aniId = ID_ANI_SHELL_ROLLING;
-	else if (state == KOOPA_STATE_DIE)
-		aniId = ID_ANI_SHELL_IDLING;
-	
+	else if (state == KOOPA_STATE_WAKING)
+		aniId = ID_ANI_KOOPA_WAKING;
+
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
 }
 
 void CKoopa::SetState(int state)
@@ -181,9 +243,18 @@ void CKoopa::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-	case SHELL_STATE_IDLING:
+	case KOOPA_STATE_DIE:
 		die_start = GetTickCount64();
-		vx = SHELL_IDLING_SPEED;
+		y += (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_HEIGHT_DIE) / 2;
+		vx = 0;
+		vy = 0;
+		ay = 0;
+		break;
+	case SHELL_STATE_IDLING:
+		isVulnerable = true;
+		wakingUp_timer = GetTickCount64();
+		vx = 0;
+		y += (KOOPA_BBOX_HEIGHT - SHELL_BBOX_HEIGHT) / 2;
 		break;
 	case KOOPA_STATE_WALKING_LEFT:
 		vx = -KOOPA_WALKING_SPEED;
@@ -197,31 +268,31 @@ void CKoopa::SetState(int state)
 	case SHELL_STATE_ROLLING_RIGHT:
 		vx = SHELL_ROLLING_SPEED;
 		break;
-	case KOOPA_STATE_DIE:
-		die_start = GetTickCount64();
-		y += (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_HEIGHT_DIE) / 2;
+	case KOOPA_STATE_WAKING:
+		wakingUp_timeout = GetTickCount64();
 		vx = 0;
-		vy = 0;
-		ay = 0;
 		break;
+	}
+}
+
+void CKoopa::Wakeup()
+{
+	if (state == KOOPA_STATE_WAKING)
+	{
+		y -= (KOOPA_BBOX_HEIGHT - SHELL_BBOX_HEIGHT) / 2;
+		SetState(KOOPA_STATE_WALKING_LEFT);
 	}
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (state == SHELL_STATE_IDLING)
+	if (state == SHELL_STATE_IDLING || state == SHELL_STATE_ROLLING_LEFT
+		|| state == SHELL_STATE_ROLLING_RIGHT || state == KOOPA_STATE_WAKING)
 	{
-		left = x - SHELL_IDLING_BBOX_WIDTH / 2;
-		top = y - SHELL_IDLING_BBOX_HEIGHT / 2;
-		right = left + SHELL_IDLING_BBOX_WIDTH;
-		bottom = top + SHELL_IDLING_BBOX_HEIGHT;
-	}
-	else if (state == SHELL_STATE_ROLLING_LEFT || state == SHELL_STATE_ROLLING_RIGHT)
-	{
-		left = x - SHELL_ROLLING_BBOX_WIDTH / 2;
-		top = y - SHELL_ROLLING_BBOX_HEIGHT / 2;
-		right = left + SHELL_ROLLING_BBOX_WIDTH;
-		bottom = top + SHELL_ROLLING_BBOX_HEIGHT;
+		left = x - SHELL_BBOX_WIDTH / 2;
+		top = y - SHELL_BBOX_HEIGHT / 2;
+		right = left + SHELL_BBOX_WIDTH;
+		bottom = top + SHELL_BBOX_HEIGHT;
 	}
 	else if (state == KOOPA_STATE_WALKING_LEFT || state == KOOPA_STATE_WALKING_RIGHT)
 	{

@@ -91,6 +91,28 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 
 }
 
+void CMario::Attacked()
+{
+	if (untouchable == 0)
+	{
+		if (level == MARIO_LEVEL_RACOON)
+		{
+			level = MARIO_LEVEL_BIG;
+			StartUntouchable();
+		}
+		else if (level == MARIO_LEVEL_BIG)
+		{
+			level = MARIO_LEVEL_SMALL;
+			StartUntouchable();
+		}
+		else
+		{
+			DebugOut(L">>> Mario DIE >>> \n");
+			SetState(MARIO_STATE_DIE);
+		}
+	}
+}
+
 
 void CMario::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 {
@@ -131,7 +153,7 @@ void CMario::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 		}
 	}
 
-	if (isAttack && e->nx !=0)
+	if (isAttack && e->nx >0 || isAttack && e->nx < 0)
 	{
 		if (brick->GetType() == BRICK_TYPE_HIDDENCOIN)
 		{
@@ -192,21 +214,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 		{
 			if (goomba->GetState() != GOOMBA_STATE_DIE)
 			{
-				if (level == MARIO_LEVEL_RACOON)
-				{
-					level = MARIO_LEVEL_BIG;
-					StartUntouchable();
-				}
-				else if (level == MARIO_LEVEL_BIG)
-				{
-					level = MARIO_LEVEL_SMALL;
-					StartUntouchable();
-				}
-				else
-				{
-					DebugOut(L">>> Mario DIE >>> \n");
-					SetState(MARIO_STATE_DIE);
-				}
+				Attacked();
 			}
 		}
 	}
@@ -265,6 +273,11 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 		koopa->SetState(KOOPA_STATE_DIE);
 
 	}
+	else if (koopa->GetState() != SHELL_STATE_IDLING)
+		{
+			Attacked();
+		}
+	
 	else // hit by koopa
 	{
 		if (untouchable == 0)
@@ -284,7 +297,30 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 			}
 		}
 	}
-	// kick the shell
+
+	if (e->nx != 0)
+	{
+		if (koopa->GetState() == SHELL_STATE_IDLING)
+		{
+			//Pick koopa
+			if ((state == MARIO_STATE_RUNNING_LEFT || state == MARIO_STATE_RUNNING_RIGHT))
+			{
+				isHolding = true;
+				koopa->isBeingHeld = true;
+			}
+			else // kick koopa
+			{
+				if (e->nx > 0)
+					koopa->SetState(SHELL_STATE_ROLLING_LEFT);
+				else koopa->SetState(SHELL_STATE_ROLLING_RIGHT);
+				SetState(MARIO_STATE_KICK);
+				isHolding = false;
+				koopa->isBeingHeld = false;
+				koopa->isVulnerable = false;
+			}
+		}
+	}
+	// kick 
 	if (e->nx != 0)
 	{
 		if (koopa->GetState() == SHELL_STATE_IDLING)
@@ -294,23 +330,12 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 			else koopa->SetState(SHELL_STATE_ROLLING_RIGHT);
 		}
 	}
-	else // hit by SHELL
+	else 
 	{
 		if (untouchable == 0)
 		{
 			if (koopa->GetState() != SHELL_STATE_IDLING)
-			{
-				if (level > MARIO_LEVEL_SMALL)
-				{
-					level = MARIO_LEVEL_SMALL;
-					StartUntouchable();
-				}
-				else
-				{
-					DebugOut(L">>> Mario DIE >>> \n");
-					SetState(MARIO_STATE_DIE);
-				}
-			}
+				Attacked();
 		}
 	}
 }
