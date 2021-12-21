@@ -21,4 +21,5 @@ height	240
 20	textures\misc.png
 21	textures\misc_2.png
 30	textures\tiles.png
+40	textures\hud.png
 

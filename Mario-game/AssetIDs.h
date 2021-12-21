@@ -21,7 +21,9 @@
 #define OBJECT_TYPE_MUSHROOM 7
 #define OBJECT_TYPE_DCOIN 8
 
+
 #define OBJECT_TYPE_PORTAL	50
+#define OBJECT_TYPE_HUD 100
 
 
 #pragma region MARIO 

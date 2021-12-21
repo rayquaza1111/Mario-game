@@ -42,6 +42,9 @@
     <Filter Include="GameObject\Portal">
       <UniqueIdentifier>{a8710274-37f7-4085-a902-e653b446632d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\HUD">
+      <UniqueIdentifier>{e59afa5c-7b02-4702-8a14-39f8d1653b58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -130,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="PButton.cpp">
       <Filter>GameObject\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="hud.cpp">
+      <Filter>GameObject\HUD</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +237,9 @@
     </ClInclude>
     <ClInclude Include="PButton.h">
       <Filter>GameObject\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="hud.h">
+      <Filter>GameObject\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

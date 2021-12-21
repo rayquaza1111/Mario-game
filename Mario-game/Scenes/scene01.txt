@@ -9,6 +9,7 @@ assets\ground.txt
 coin.txt
 leaf.txt
 pbutton.txt
+hud.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -100,6 +101,9 @@ pbutton.txt
 #Portal
 #id	x	y	r	b	scene_id
 #50	200	160	216	180	1
+
+#HUD
+100	5	5
 
 [MAP]
 #id	filePath.png	maxCol	maxRow	filePath.txt

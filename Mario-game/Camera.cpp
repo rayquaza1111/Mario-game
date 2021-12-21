@@ -2,6 +2,7 @@
 #include "Mario.h"
 #include "Map.h"
 #include "PlayScene.h"
+#include "hud.h"
 CCamera* CCamera::__instance = NULL;
 
 CCamera* CCamera::GetInstance()

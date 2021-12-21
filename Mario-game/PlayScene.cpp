@@ -20,6 +20,7 @@
 #include "Platform.h"
 #include "ColourPlatform.h"
 #include "Portal.h"
+#include "hud.h"
 
 
 // MAP
@@ -176,6 +177,18 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}
 
+	case OBJECT_TYPE_HUD:
+	{
+		if (hud != NULL)
+		{
+			DebugOut(L"[ERROR] HUD object was created before!\n");
+			return;
+		}
+		obj = new CHUD(x, y);
+		hud = (CHUD*)obj;
+		break;
+	}
+
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());
@@ -306,6 +319,10 @@ void CPlayScene::Update(DWORD dt)
 
 	// Update camera to follow mario
 	CCamera::GetInstance()->Update();
+
+	if (hud != NULL)
+		hud->Update(dt, &coObjects);
+
 	PurgeDeletedObjects();
 }
 
