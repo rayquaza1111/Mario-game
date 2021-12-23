@@ -49,6 +49,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 
+	if (isOnPlatform)
+	{
+		isFlying = false;
+	}
+
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
@@ -683,14 +688,19 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_ATTACK:
-			isAttack = true;
-			timeAttack = GetTickCount64();
+		isAttack = true;
+		timeAttack = GetTickCount64();
 		break;
 
 	case MARIO_STATE_DIE:
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		vx = 0;
 		ax = 0;
+		break;
+
+	case MARIO_STATE_FLYING:
+		isFlying = true;
+		vy = -MARIO_FLY_SPEED;
 		break;
 	}
 
