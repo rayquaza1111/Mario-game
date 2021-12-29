@@ -19,7 +19,7 @@ class CPButton :public CGameObject
 	float y_start;
 public:
 	BOOLEAN Pressed_once;
-	BOOLEAN isPressed;
+	bool isPressed;
 	CPButton(float x, float y);
 
 	virtual void Render();

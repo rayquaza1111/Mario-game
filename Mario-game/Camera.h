@@ -2,6 +2,8 @@
 #include "Map.h"
 #include "GameGlobal.h"
 
+#define CAM_Y_POSITION_TERRAIN_ZONE 400
+#define CAM_Y_POSITION_MONEY_ZONE	592
 
 class CCamera
 {

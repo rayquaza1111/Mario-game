@@ -158,19 +158,20 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		float cell_width = (float)atof(tokens[3].c_str());
 		float cell_height = (float)atof(tokens[4].c_str());
 		int length = atoi(tokens[5].c_str());
-		int type = atoi(tokens[6].c_str());
-		int sprite_id = atoi(tokens[7].c_str());
+		int depth = atoi(tokens[6].c_str());
+		int type = atoi(tokens[7].c_str());
+		int sprite_id = atoi(tokens[8].c_str());
 
 		if (type == 1 )
 			obj = new CPlatform(
 				x, y,
-				cell_width, cell_height, length, type,
+				cell_width, cell_height, length, depth, type,
 				sprite_id
 			);
 		else if (type == 2)
 			obj = new CColourPlatform(
 				x, y,
-				cell_width, cell_height, length, type,
+				cell_width, cell_height, length, depth, type,
 				sprite_id
 			);
 

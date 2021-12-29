@@ -12,6 +12,7 @@
 
 #define MARIO_ACCEL_WALK_X	0.0005f
 #define MARIO_ACCEL_RUN_X	0.0004f
+#define MARIO_ACCEL_MAX_X	0.6f
 
 #define MARIO_JUMP_SPEED_Y		0.6f
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
@@ -65,7 +66,10 @@
 #define ID_ANI_MARIO_BRACE_RIGHT 1000
 #define ID_ANI_MARIO_BRACE_LEFT 1001
 
+#define ID_ANI_MARIO_ENTERING_PIPE		1002
+
 #define ID_ANI_MARIO_DIE 999
+
 
 // SMALL MARIO
 #define ID_ANI_MARIO_SMALL_IDLE_RIGHT 1100
@@ -85,6 +89,8 @@
 
 #define ID_ANI_MARIO_SMALL_JUMP_RUN_RIGHT 1600
 #define ID_ANI_MARIO_SMALL_JUMP_RUN_LEFT 1601
+
+#define ID_ANI_MARIO_SMALL_ENTERING_PIPE		1699
 
 // RACCOON MARIO
 
@@ -122,9 +128,14 @@
 #define ID_ANI_MARIO_RACOON_ATTACK_RIGHT	2400
 #define ID_ANI_MARIO_RACOON_ATTACK_LEFT	2401
 
+#define ID_ANI_MARIO_RACCOON_ENTERING_PIPE		2500
+
 #pragma endregion
 
 #define GROUND_Y 160.0f
+
+#define GROUND 432
+
 
 
 
@@ -137,6 +148,7 @@
 #define MARIO_BIG_BBOX_HEIGHT 24
 #define MARIO_BIG_SITTING_BBOX_WIDTH  13
 #define MARIO_BIG_SITTING_BBOX_HEIGHT 16
+
 #define MARIO_TAIL_LENGTH	0
 
 #define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT-MARIO_BIG_SITTING_BBOX_HEIGHT)/2)
@@ -145,13 +157,21 @@
 #define MARIO_SMALL_BBOX_HEIGHT 12
 
 #define MARIO_RACOON_BBOX_WIDTH  20
+#define MARIO_RACOON_BBOX_HEIGHT 24
+#define MARIO_RACOON_SITTING_BBOX_WIDTH  20
+#define MARIO_RACOON_SITTING_BBOX_HEIGHT 16
+#define MARIO_RACOON_SIT_HEIGHT_ADJUST ((MARIO_RACOON_BBOX_HEIGHT-MARIO_RACOON_SITTING_BBOX_HEIGHT)/2 - 4 )
 
 
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_TIME_ATTACK 240
+#define MARIO_TIME_FLYING 30000
+#define MARIO_PIPE_TIME			800
 
 #define MARIO_SPEED_STAGE 7.0f
 #define MARIO_SPEED_PHASE 7
+
+#define MARIO_STAND 0.0f
 
 
 
@@ -166,10 +186,14 @@ class CMario : public CGameObject
 	int level; 
 	int untouchable; 
 	ULONGLONG untouchable_start;
-	BOOLEAN isOnPlatform;
+	
 	int coin;
 	BOOLEAN isAttack;
 	ULONGLONG timeAttack;
+	ULONGLONG timeFlying;
+	ULONGLONG pipeUp_start;
+	ULONGLONG pipeDown_start;
+
 
 	void OnCollisionWithBrick(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
@@ -188,11 +212,15 @@ class CMario : public CGameObject
 public:
 	BOOLEAN isHolding;
 	BOOLEAN isFlying;
+	BOOLEAN isPipeDown = false;
+	BOOLEAN isPipeUp = false;
+	BOOLEAN isOnPlatform;
 
 	static CMario* GetInstance();
 	CMario();
 	CMario(float x, float y) : CGameObject(x, y)
 	{
+		state = MARIO_STATE_IDLE;
 		isSitting = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
@@ -207,6 +235,9 @@ public:
 		isHolding = false;
 		timeAttack = ULONGLONG(0);
 		isFlying = false;
+		pipeDown_start = 0;
+		pipeUp_start = 0;
+
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -217,8 +248,8 @@ public:
 	void CoinUp() { coin++; }
 
 	int IsCollidable()
-	{ 
-		return (state != MARIO_STATE_DIE); 
+	{
+		return (state != MARIO_STATE_DIE && !isPipeDown && !isPipeUp);
 	}
 
 	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable==0); }
@@ -235,4 +266,43 @@ public:
 	float maxspeed = MARIO_RUNNING_SPEED;
 	float GetMaxSpeed() { return this->maxspeed; }
 	float GetSpeed() { return this->vx; }
+	void SetMaxSpeed() { this->vx = maxspeed; }
+
+	void HandleMarioEnterPipe();
+
+
+	void StartPipeUp()
+	{
+		pipeUp_start = GetTickCount64();
+		isPipeUp = true;
+	}
+	void StartPipeDown()
+	{
+		pipeDown_start = GetTickCount64();
+		isPipeDown = true;
+	}
+
+
+	void StopPipeUp()
+	{
+		isPipeUp = false;
+		pipeUp_start = 0;
+	}
+	void StopPipeDown()
+	{
+		isPipeDown = false;
+		pipeDown_start = 0;
+	}
+
+	void SwitchArea()
+	{
+		if (Get_y() < 432)
+		{
+			SetPosition(2096, 580);
+		}
+		else
+		{
+			SetPosition(2272, 352);
+		}
+	}
 };

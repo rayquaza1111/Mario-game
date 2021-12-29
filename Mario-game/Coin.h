@@ -9,7 +9,7 @@
 
 #define COIN_STATE_IDLE 11
 
-#define ID_ANI_COIN 11000
+#define ID_ANI_COIN 11001
 
 class CCoin : public CGameObject {
 public:

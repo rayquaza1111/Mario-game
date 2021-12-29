@@ -7,26 +7,27 @@
 // 
 class CPlatform : public CGameObject
 {
-protected: 
+protected:
 	int type;				// type of platform
 	int length;				// Unit: cell 
+	int depth;
 	float cellWidth;
 	float cellHeight;
 	int spriteId;
-public: 
+public:
 	CPlatform(float x, float y,
-		float cell_width, float cell_height, int length, int type,
+		float cell_width, float cell_height, int length, int depth, int type,
 		int sprite_id) :CGameObject(x, y)
 	{
 		this->length = length;
+		this->depth = depth;
 		this->cellWidth = cell_width;
 		this->cellHeight = cell_height;
 		this->type = type;
 		this->spriteId = sprite_id;
 	}
-
-	virtual float GetBeginPlatform() { return x; }
 	virtual float GetEndPlatform() { return (x + length * cellWidth); }
+	virtual float GetBeginPlatform() { return x; }
 	virtual void Render();
 	virtual void Update(DWORD dt) {}
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b);

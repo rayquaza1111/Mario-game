@@ -202,7 +202,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			y = mario->Get_y() - 1; //TODO change const number
 		else y = mario->Get_y() + 5;
 		vy = 0;
-		float tmp = mario->Get_nx();
+		int tmp = mario->Get_nx();
 		x = mario->Get_x() + tmp * (MARIO_BIG_BBOX_WIDTH);
 		if (mario->GetLevel() == MARIO_LEVEL_SMALL)
 		{

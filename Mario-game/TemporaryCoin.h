@@ -21,7 +21,7 @@ class CTCoin : public CCoin
 	float start_y;
 	int isMultiCoin;
 public:
-	BOOLEAN changed;
+	bool changed;
 	ULONGLONG timeExist;
 	CTCoin(float x, float y) : CCoin(x, y)
 	{

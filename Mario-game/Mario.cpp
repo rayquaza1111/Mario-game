@@ -49,10 +49,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 
-	if (isOnPlatform)
+
+	if (isFlying)
 	{
-		isFlying = false;
+		if (GetTickCount64() - timeFlying > MARIO_TIME_FLYING)
+		{
+			isFlying = false;
+			SetState(MARIO_STATE_IDLE);
+		}
 	}
+
+	HandleMarioEnterPipe();
 
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -74,7 +81,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	else
 		if (e->nx != 0 && e->obj->IsBlocking())
 		{
-			vx = 0;
+				vx = 0;
+			
 		}
 
 	if (dynamic_cast<CGoomba*>(e->obj))
@@ -198,7 +206,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	}
 	else if (isAttack && e->nx !=0)
 	{
-		untouchable == 1;
+		untouchable = 1;
 		DebugOut(L">>>  touch goomba by x >>> \n");
 		if (goomba->GetState() != GOOMBA_STATE_DIE)
 		{
@@ -211,7 +219,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 			else
 				goomba->SetState(GOOMBA_STATE_DIE);
 		}
-		untouchable == 0;
+		untouchable = 0;
 	}
 	else // hit by Goomba
 	{
@@ -253,7 +261,18 @@ void CMario::OnCollisionWithPButton(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
 	CPortal* p = (CPortal*)e->obj;
-	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
+	if (e->ny > 0 || e->ny < 0)
+	{
+		DebugOut(L">>> TouchPortal >>> \n");
+		if (e->ny < 0 && (CGame::GetInstance()->IsKeyDown(DIK_DOWN)))
+		{
+			StartPipeDown();
+		}
+		if (e->ny > 0 && (CGame::GetInstance()->IsKeyDown(DIK_UP)))
+		{
+			StartPipeUp();
+		}
+	}
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
@@ -384,7 +403,9 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 int CMario::GetAniIdSmall()
 {
 	int aniId = -1;
-	if (!isOnPlatform)
+	if (isPipeDown || isPipeUp)
+		aniId = ID_ANI_MARIO_SMALL_ENTERING_PIPE;
+	else if (!isOnPlatform)
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
 		{
@@ -446,7 +467,9 @@ int CMario::GetAniIdSmall()
 int CMario::GetAniIdBig()
 {
 	int aniId = -1;
-	if (!isOnPlatform)
+	if (isPipeDown || isPipeUp)
+		aniId = ID_ANI_MARIO_ENTERING_PIPE;
+	else if (!isOnPlatform)
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
 		{
@@ -504,7 +527,9 @@ int CMario::GetAniIdBig()
 int CMario::GetAniIdRacoon()
 {
 	int aniId = -1;
-	if (!isOnPlatform)
+	if (isPipeDown || isPipeUp)
+		aniId = ID_ANI_MARIO_RACCOON_ENTERING_PIPE;
+	else if (!isOnPlatform)
 	{
 		if (nx >= 0)
 		{
@@ -664,12 +689,19 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_SIT:
-		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
+		if (isOnPlatform && level == MARIO_LEVEL_BIG)
 		{
 			state = MARIO_STATE_IDLE;
 			isSitting = true;
 			vx = 0; vy = 0.0f;
 			y += MARIO_SIT_HEIGHT_ADJUST;
+		}
+		if (isOnPlatform && level == MARIO_LEVEL_RACOON)
+		{
+			state = MARIO_STATE_IDLE;
+			isSitting = true;
+			vx = 0; vy = 0.0f;
+			y += MARIO_RACOON_SIT_HEIGHT_ADJUST;
 		}
 		break;
 
@@ -732,10 +764,10 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	{
 		if (isSitting)
 		{
-			left = x - MARIO_BIG_SITTING_BBOX_WIDTH / 2;
-			top = y - MARIO_BIG_SITTING_BBOX_HEIGHT / 2;
-			right = left + MARIO_BIG_SITTING_BBOX_WIDTH;
-			bottom = top + MARIO_BIG_SITTING_BBOX_HEIGHT;
+			left = x - MARIO_RACOON_SITTING_BBOX_WIDTH / 2;
+			top = y - MARIO_RACOON_SITTING_BBOX_HEIGHT / 2;
+			right = left + MARIO_RACOON_SITTING_BBOX_WIDTH;
+			bottom = top + MARIO_RACOON_SITTING_BBOX_HEIGHT;
 		}
 		if (isAttack)
 		{
@@ -769,5 +801,43 @@ void CMario::SetLevel(int l)
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
 	level = l;
+}
+
+void CMario::HandleMarioEnterPipe()
+{
+	if (GetTickCount64() - pipeDown_start < MARIO_PIPE_TIME && isPipeDown)
+	{
+		vy = 0.03f;
+	}
+	if (GetTickCount64() - pipeDown_start >= MARIO_PIPE_TIME && isPipeDown)
+	{
+		if (Get_y() < GROUND)
+		{
+			DebugOut(L">>> chui cong' >>> \n");
+			SwitchArea();
+			StartPipeDown();
+		}
+		else if (Get_y() > GROUND)
+		{
+			DebugOut(L">>> ngung chui cong' >>> \n");
+			StopPipeDown();
+		}
+	}
+	if (GetTickCount64() - pipeUp_start < MARIO_PIPE_TIME && isPipeUp)
+	{
+		vy = -0.03f;
+	}
+	if (GetTickCount64() - pipeUp_start >= MARIO_PIPE_TIME && isPipeUp)
+	{
+		if (Get_y() > GROUND)
+		{
+			SwitchArea();
+			StartPipeUp();
+		}
+		else if (Get_y() < GROUND)
+		{
+			StopPipeUp();
+		}
+	}
 }
 

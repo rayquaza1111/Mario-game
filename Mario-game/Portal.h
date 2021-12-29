@@ -2,20 +2,20 @@
 
 #include "GameObject.h"
 
-/*
-	Object that triggers scene switching
-*/
+
 class CPortal : public CGameObject
 {
-	int scene_id;	// target scene to switch to 
+	int scene_id;
 
 	float width;
-	float height; 
+	float height;
+
+	int zone;
 public:
 	CPortal(float l, float t, float r, float b, int scene_id);
 	virtual void Render();
 	void RenderBoundingBox(void);
-	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
-	int GetSceneId() { return scene_id;  }
+	virtual void GetBoundingBox(float& l, float& t, float& r, float& b);
+	int GetSceneId() { return scene_id; }
 	int IsBlocking() { return 0; }
 };

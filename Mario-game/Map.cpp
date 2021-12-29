@@ -49,14 +49,14 @@ void CMaps::Render()
 	float cam_x, cam_y;
 	CCamera::GetInstance()->GetCamPos(cam_x, cam_y);
 	//DebugOut(L"x = %f, y = %f \n", cam_x, cam_y);
-	for (int i = cam_y/TILE_HEIGHT; i < (cam_y + SCREEN_HEIGHT)/TILE_HEIGHT; ++i)
+	for (int i = (int)cam_y/TILE_HEIGHT; i < (cam_y + SCREEN_HEIGHT)/TILE_HEIGHT; ++i)
 	{
-		for (int j = cam_x/TILE_WIDTH; j < (cam_x + SCREEN_WIDTH)/TILE_WIDTH; ++j)
+		for (int j = (int)cam_x/TILE_WIDTH; j < (cam_x + SCREEN_WIDTH)/TILE_WIDTH; ++j)
 		{
 			if (mapTiles[i][j] >= 0)
 			{
-				float x = j * TILE_WIDTH;
-				float y = i * TILE_HEIGHT;
+				float x = (float)j * TILE_WIDTH;
+				float y = (float)i * TILE_HEIGHT;
 				sprites->Get(mapTiles.at(i).at(j) + w1id + 1)->Draw(x, y);
 			}
 		}
@@ -66,11 +66,11 @@ void CMaps::Render()
 
 float CMaps::GetWidthMap()
 {
-	return col * TILE_WIDTH - TILE_WIDTH * 6;
+	return (float)col * TILE_WIDTH - TILE_WIDTH * 6;
 }
 float CMaps::GetHeightMap()
 {
-	return row * TILE_HEIGHT;
+	return (float)row * TILE_HEIGHT;
 }
 
 CMaps* CMaps::GetInstance()

@@ -22,8 +22,10 @@
 #define OBJECT_TYPE_DCOIN 8
 
 
+
 #define OBJECT_TYPE_PORTAL	50
 #define OBJECT_TYPE_HUD 100
+#define OBJECT_TYPE_PIPE_PORTAL 200
 
 
 #pragma region MARIO 
