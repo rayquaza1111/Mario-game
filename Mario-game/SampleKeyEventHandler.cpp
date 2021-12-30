@@ -24,6 +24,13 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 				mario->SetState(MARIO_STATE_FLYING);
 			}
 		}
+		else if (mario->isFlying == false && mario->isOnPlatform == false)
+		{
+			if (mario->GetLevel() == MARIO_LEVEL_RACOON)
+			{
+				mario->SetState(MARIO_STATE_WAGGING);
+			}
+		}
 		else
 		{
 			mario->SetState(MARIO_STATE_JUMP);
@@ -62,7 +69,10 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_S:
-
+		if (mario->isFlying == true)
+		{
+			mario->isFlying = false;
+		}
 		
 			mario->SetState(MARIO_STATE_RELEASE_JUMP);
 		

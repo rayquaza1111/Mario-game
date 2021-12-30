@@ -6,6 +6,9 @@
 #include "Mario.h"
 #include "debug.h"
 #include "PlayScene.h"
+#include "Leaf.h"
+#include "DCoin.h"
+#include "Mushroom.h"
 
 CKoopa::CKoopa(float x, float y, int lvl) :CGameObject(x, y)
 {
@@ -103,6 +106,47 @@ void CKoopa::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 				vy = 0;
 			}
 		}
+	if (state == SHELL_STATE_ROLLING_LEFT || state == SHELL_STATE_ROLLING_RIGHT)
+	{
+		if (e->nx > 0 || e->nx <0)
+		{
+			if (brick->GetType() == BRICK_TYPE_QUESTIONCOIN)
+			{
+				brick->SetState(BRICK_STATE_BOUNCING);
+				brick->SetType(BRICK_TYPE_DISABLED);
+				CGameObject* obj = NULL;
+				obj = new CDCoin(brick->Get_x(), brick->Get_y(), 0);
+				obj->SetPosition(brick->Get_x(), brick->Get_y());
+				((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
+			}
+			else if (brick->GetType() == BRICK_TYPE_QUESTIONITEM)
+			{
+				if (level == MARIO_LEVEL_SMALL)
+				{
+					brick->SetState(BRICK_STATE_BOUNCING);
+					brick->SetType(BRICK_TYPE_DISABLED);
+					CGameObject* obj = NULL;
+					obj = new CMushroom(brick->Get_x(), brick->Get_y());
+					obj->SetPosition(brick->Get_x(), brick->Get_y());
+					((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
+				}
+				else if (level > MARIO_LEVEL_SMALL)
+				{
+					brick->SetState(BRICK_STATE_BOUNCING);
+					brick->SetType(BRICK_TYPE_DISABLED);
+					CGameObject* obj = NULL;
+					obj = new CLeaf(brick->Get_x(), brick->Get_y());
+					obj->SetPosition(brick->Get_x(), brick->Get_y());
+					((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
+				}
+			}
+			else if (brick->GetType() == BRICK_TYPE_HIDDENCOIN)
+			{
+				DebugOut(L">>> touch brick %d >>> \n");
+				brick->Delete();
+			}
+		}
+	}
 }
 
 
@@ -232,6 +276,8 @@ void CKoopa::Render()
 	else if (state == SHELL_STATE_ROLLING_LEFT || state == SHELL_STATE_ROLLING_RIGHT)
 		aniId = ID_ANI_SHELL_ROLLING;
 	else if (state == KOOPA_STATE_WAKING)
+		aniId = ID_ANI_KOOPA_WAKING;
+	else if (state == KOOPA_STATE_DIE)
 		aniId = ID_ANI_KOOPA_WAKING;
 
 

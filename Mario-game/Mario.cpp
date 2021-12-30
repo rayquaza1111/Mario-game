@@ -49,6 +49,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 
+	if (isWagging)
+	{
+		if (GetTickCount64() - timeWagging > MARIO_TIME_WAGGING)
+		{
+			isWagging = false;
+		}
+	}
+
 
 	if (isFlying)
 	{
@@ -279,7 +287,6 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 
-	// jump on top >> make koopa a shell
 	if (e->ny < 0)
 	{
 		if (koopa->GetState() != SHELL_STATE_IDLING)
@@ -302,7 +309,7 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 			Attacked();
 		}
 	
-	else // hit by koopa
+	else 
 	{
 		if (untouchable == 0)
 		{
@@ -326,13 +333,12 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	{
 		if (koopa->GetState() == SHELL_STATE_IDLING)
 		{
-			//Pick koopa
 			if ((state == MARIO_STATE_RUNNING_LEFT || state == MARIO_STATE_RUNNING_RIGHT))
 			{
 				isHolding = true;
 				koopa->isBeingHeld = true;
 			}
-			else // kick koopa
+			else 
 			{
 				if (e->nx > 0)
 					koopa->SetState(SHELL_STATE_ROLLING_LEFT);
@@ -611,6 +617,12 @@ int CMario::GetAniIdRacoon()
 		
 	}
 
+	if (isWagging)
+	{
+		if (nx > 0)aniId = ID_ANI_MARIO_RACCOON_WAGGING_RIGHT;
+		else aniId = ID_ANI_MARIO_RACCOON_WAGGING_LEFT;
+	}
+
 	if (aniId == -1) aniId = ID_ANI_MARIO_RACCOON_IDLE_RIGHT;
 
 	return aniId;
@@ -731,8 +743,23 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_FLYING:
+		timeFlying = GetTickCount64();
 		isFlying = true;
 		vy = -MARIO_FLY_SPEED;
+		break;
+
+	case MARIO_STATE_WAGGING:
+		isWagging = true;
+		timeWagging = GetTickCount64();
+		if (nx > 0)
+		{
+			vx = MARIO_WAGGING_X;
+		}
+		else
+		{
+			vx = -MARIO_WAGGING_X;
+		}
+		vy = MARIO_WAGGING_Y;
 		break;
 	}
 
