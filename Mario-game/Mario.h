@@ -7,7 +7,7 @@
 #include "debug.h"
 
 #define MARIO_WALKING_SPEED		0.1f
-#define MARIO_RUNNING_SPEED		0.3f
+#define MARIO_RUNNING_SPEED		0.25f
 
 
 #define MARIO_ACCEL_WALK_X	0.0005f
@@ -170,7 +170,7 @@
 
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_TIME_ATTACK 240
-#define MARIO_TIME_FLYING 30000
+#define MARIO_TIME_FLYING 2000
 #define MARIO_TIME_WAGGING 300
 #define MARIO_PIPE_TIME			800
 
@@ -180,7 +180,7 @@
 #define MARIO_STAND 0.0f
 
 #define MARIO_WAGGING_X	0.05f
-#define MARIO_WAGGING_Y	0.015f
+#define MARIO_WAGGING_Y	0.03f
 
 
 
@@ -204,6 +204,7 @@ class CMario : public CGameObject
 	ULONGLONG pipeUp_start;
 	ULONGLONG pipeDown_start;
 	ULONGLONG timeWagging;
+	ULONGLONG flying_start;
 
 
 	void OnCollisionWithBrick(LPCOLLISIONEVENT e);
@@ -241,16 +242,16 @@ public:
 		level = MARIO_LEVEL_BIG;
 		untouchable = 0;
 		untouchable_start = -1;
-		isOnPlatform = false;
+		//isOnPlatform = false;
 		coin = 0;
 		life = 4;
 		isHolding = false;
-		timeAttack = ULONGLONG(0);
+		timeAttack = timeFlying = ULONGLONG(0);
 		isFlying = false;
 		pipeDown_start = 0;
 		pipeUp_start = 0;
 		isWagging = false;
-		
+
 
 
 	}
@@ -282,6 +283,7 @@ public:
 	float GetMaxSpeed() { return this->maxspeed; }
 	float GetSpeed() { return this->vx; }
 	void SetMaxSpeed() { this->vx = maxspeed; }
+	void SetSpeed(float speedset) { this->vx = speedset; }
 
 	void HandleMarioEnterPipe();
 

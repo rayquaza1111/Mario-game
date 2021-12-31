@@ -388,7 +388,7 @@ void CGame::ProcessKeyboard()
 
 	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-	if (mario->isPipeDown || mario->isPipeUp)
+	if (mario->isPipeDown || mario->isPipeUp )
 		return;
 
 	// Collect all key states first

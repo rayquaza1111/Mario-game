@@ -9,6 +9,7 @@
 #include "Leaf.h"
 #include "DCoin.h"
 #include "Mushroom.h"
+#include "PButton.h"
 
 CKoopa::CKoopa(float x, float y, int lvl) :CGameObject(x, y)
 {
@@ -144,6 +145,14 @@ void CKoopa::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 			{
 				DebugOut(L">>> touch brick %d >>> \n");
 				brick->Delete();
+			}
+			else if (brick->GetType() == BRICK_TYPE_PBUTTON)
+			{
+				brick->SetType(BRICK_TYPE_DISABLED);
+				CGameObject* obj = NULL;
+				obj = new CPButton(brick->Get_x(), brick->Get_y());
+				obj->SetPosition(brick->Get_x(), brick->Get_y());
+				((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->LoadObject(obj);
 			}
 		}
 	}

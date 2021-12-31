@@ -60,10 +60,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (isFlying)
 	{
-		if (GetTickCount64() - timeFlying > MARIO_TIME_FLYING)
+		if (GetTickCount64() - timeFlying > MARIO_TIME_FLYING && isFlying)
 		{
+			timeFlying = 0;
 			isFlying = false;
-			SetState(MARIO_STATE_IDLE);
 		}
 	}
 
@@ -272,7 +272,8 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 	if (e->ny > 0 || e->ny < 0)
 	{
 		DebugOut(L">>> TouchPortal >>> \n");
-		if (e->ny < 0 && (CGame::GetInstance()->IsKeyDown(DIK_DOWN)))
+		/*if (e->ny < 0 && (CGame::GetInstance()->IsKeyDown(DIK_DOWN)))*/
+		if (CGame::GetInstance()->IsKeyDown(DIK_DOWN))
 		{
 			StartPipeDown();
 		}
@@ -759,7 +760,7 @@ void CMario::SetState(int state)
 		{
 			vx = -MARIO_WAGGING_X;
 		}
-		vy = MARIO_WAGGING_Y;
+		vy = -MARIO_WAGGING_Y;
 		break;
 	}
 
