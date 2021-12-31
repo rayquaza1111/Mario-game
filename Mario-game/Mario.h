@@ -7,7 +7,7 @@
 #include "debug.h"
 
 #define MARIO_WALKING_SPEED		0.1f
-#define MARIO_RUNNING_SPEED		0.4f
+#define MARIO_RUNNING_SPEED		0.3f
 
 
 #define MARIO_ACCEL_WALK_X	0.0005f
@@ -41,6 +41,8 @@
 #define MARIO_STATE_KICK 701
 
 #define MARIO_STATE_FLYING			800
+
+#define MARIO_STATE_WAGGING		900
 
 
 #pragma region ANIMATION_ID
@@ -130,6 +132,9 @@
 
 #define ID_ANI_MARIO_RACCOON_ENTERING_PIPE		2500
 
+#define ID_ANI_MARIO_RACCOON_WAGGING_RIGHT		2600
+#define ID_ANI_MARIO_RACCOON_WAGGING_LEFT		2601
+
 #pragma endregion
 
 #define GROUND_Y 160.0f
@@ -166,12 +171,17 @@
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_TIME_ATTACK 240
 #define MARIO_TIME_FLYING 30000
+#define MARIO_TIME_WAGGING 300
 #define MARIO_PIPE_TIME			800
 
 #define MARIO_SPEED_STAGE 7.0f
 #define MARIO_SPEED_PHASE 7
 
 #define MARIO_STAND 0.0f
+
+#define MARIO_WAGGING_X	0.05f
+#define MARIO_WAGGING_Y	0.015f
+
 
 
 
@@ -193,6 +203,7 @@ class CMario : public CGameObject
 	ULONGLONG timeFlying;
 	ULONGLONG pipeUp_start;
 	ULONGLONG pipeDown_start;
+	ULONGLONG timeWagging;
 
 
 	void OnCollisionWithBrick(LPCOLLISIONEVENT e);
@@ -211,10 +222,11 @@ class CMario : public CGameObject
 	static CMario* __instance;
 public:
 	BOOLEAN isHolding;
-	BOOLEAN isFlying;
+	bool isFlying;
 	BOOLEAN isPipeDown = false;
 	BOOLEAN isPipeUp = false;
 	BOOLEAN isOnPlatform;
+	BOOLEAN isWagging;
 
 	static CMario* GetInstance();
 	CMario();
@@ -237,6 +249,9 @@ public:
 		isFlying = false;
 		pipeDown_start = 0;
 		pipeUp_start = 0;
+		isWagging = false;
+		
+
 
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
