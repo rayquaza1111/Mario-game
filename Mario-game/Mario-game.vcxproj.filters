@@ -45,6 +45,9 @@
     <Filter Include="GameObject\HUD">
       <UniqueIdentifier>{e59afa5c-7b02-4702-8a14-39f8d1653b58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Enemy\Plant &amp; Bullet">
+      <UniqueIdentifier>{59be3755-d247-4521-abbf-61c449bd4ec9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -136,6 +139,12 @@
     </ClCompile>
     <ClCompile Include="hud.cpp">
       <Filter>GameObject\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="Plant.cpp">
+      <Filter>GameObject\Enemy\Plant &amp; Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Bulllet.cpp">
+      <Filter>GameObject\Enemy\Plant &amp; Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -240,6 +249,12 @@
     </ClInclude>
     <ClInclude Include="hud.h">
       <Filter>GameObject\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="Plant.h">
+      <Filter>GameObject\Enemy\Plant &amp; Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Bulllet.h">
+      <Filter>GameObject\Enemy\Plant &amp; Bullet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,6 +13,8 @@
 #include "Mushroom.h"
 #include "Leaf.h"
 #include "PButton.h"
+#include "Plant.h"
+#include "Bulllet.h"
 
 #include "Collision.h"
 
@@ -109,6 +111,10 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CPButton*>(e->obj))
 		OnCollisionWithPButton(e);
+	else if (dynamic_cast<CBullet*>(e->obj))
+		OnCollisionWithBullet(e);
+	else if (dynamic_cast<CPlant*>(e->obj))
+		OnCollisionWithPlant(e);
 
 }
 
@@ -401,6 +407,30 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	{
 			SetLevel(MARIO_LEVEL_RACOON);
 			e->obj->Delete();
+	}
+}
+
+void CMario::OnCollisionWithBullet(LPCOLLISIONEVENT e)
+{
+	CBullet* bullet = dynamic_cast<CBullet*>(e->obj);
+
+	if (e->nx != 0 || e->ny != 0)
+	{
+		Attacked();
+	}
+}
+
+void CMario::OnCollisionWithPlant(LPCOLLISIONEVENT e)
+{
+	CPlant* plant = dynamic_cast<CPlant*>(e->obj);
+
+	if (isAttack)
+	{
+		plant->SetState(PLANT_STATE_DIE);
+	}
+	else if (e->nx != 0 || e->ny != 0)
+	{
+		Attacked();
 	}
 }
 

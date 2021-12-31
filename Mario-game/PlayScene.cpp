@@ -21,7 +21,8 @@
 #include "ColourPlatform.h"
 #include "Portal.h"
 #include "hud.h"
-
+#include "Plant.h"
+#include "Bulllet.h"
 
 // MAP
 #include "Map.h"
@@ -175,6 +176,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 				sprite_id
 			);
 
+		break;
+	}
+
+	case OBJECT_TYPE_PLANT:
+	{
+		obj = new CPlant(x, y);
 		break;
 	}
 

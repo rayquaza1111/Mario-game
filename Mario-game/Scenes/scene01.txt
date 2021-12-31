@@ -10,6 +10,9 @@ coin.txt
 leaf.txt
 pbutton.txt
 hud.txt
+bullet.txt
+plant.txt
+
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -184,6 +187,12 @@ hud.txt
 6	2352	528	16	16	20	1	1	62000
 6	2352	512	16	16	20	1	1	62000
 6	2096	496	16	16	20	1	1	62000
+
+#plant
+9	361	368
+9	1864	368	
+
+
 
 
 
